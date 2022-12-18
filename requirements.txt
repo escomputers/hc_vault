@@ -1,4 +1,5 @@
 django==4.1.4
+pymongo[tls]
 requests
 certifi
 python-dotenv
