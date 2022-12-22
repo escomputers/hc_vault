@@ -1,0 +1,73 @@
+{% extends "index.html" %}
+
+{% block content %}
+ <div class="content-wrapper">
+    <!-- Content Header (Page header) -->
+    <section class="content-header">
+      <div class="container-fluid">
+        <div class="row mb-2">
+          <div class="col-sm-6">
+  <h3 class="text-bold text-dark">Settings</h3>
+</div>
+</div>
+  </div>
+  </section>
+   
+
+    <!-- Main content -->
+    <section class="content">
+      <div class="container-fluid">
+		
+  <div class="col">
+	<div class="sticky-top mb-3">
+   <div class="card">
+    <div class="card-header">
+    <h4>Alerts</h4>
+    </div>
+	
+	
+	<div class="card-body">
+		<table id="pending_table" class="table table-bordered table-hover">
+		<thead>
+		<tr>
+		<th>ID</th>
+		<th>Nome</th>
+		<th>Documento</th>
+		<th>Prossimo avvio</th>
+		<th>Stato</th>
+		</tr>
+		</thead>
+		<tbody>
+		
+	
+		<tr>
+		<td></td>
+		<td></td>
+		<td></td>
+		<td></td>
+		
+		<td><span class="badge bg-warning"><font size="3.1em">In attesa</font></span></td>
+		</tr>
+		
+		</tbody>
+		</table>
+		</div>
+	
+</div>
+<!-- /.card -->
+
+</div>
+<!-- /.sticky-top mb-3 -->
+
+</div>
+<!-- /.col-md-3 -->
+
+</div>
+<!-- /.container-fluid -->
+
+</section>
+<!-- /.content -->
+
+</div>
+<!-- /.content-wrapper -->
+{% endblock %}
