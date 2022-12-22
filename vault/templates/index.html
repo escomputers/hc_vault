@@ -1,523 +1,119 @@
 {% load static %}
-<!DOCTYPE html>
+<!DOCTYPE HTML>
 <html lang="en">
-  <head>
-    <meta charset="utf-8">
-    <title>BASD</title>
 
-    <!-- favicon -->
-    <link rel="shortcut icon" href="{% static 'images/icon.ico' %}"/>
+<head>
+	<meta charset="utf-8">
+	<meta http-equiv="X-UA-Compatible" content="IE=edge">
+	<meta name="viewport" content="width=device-width, initial-scale=1">
 
-    <!-- jquery -->
-    <script src="{% static 'plugins/jquery/jquery.min.js' %}"></script>
+	<!-- favicon -->
+	<link rel="shortcut icon" href="{% static 'images/favicon.ico' %}"/>
 
-    <!-- jquery validation -->
-    <script src="{% static 'plugins/jquery-validation/jquery.validate.min.js' %}"></script>
-    <script src="{% static 'plugins/jquery-validation/additional-methods.min.js' %}"></script>
+	<title>Vault Licenses | Dashboard</title>
 
-    <!-- moment -->
-    <script src="{% static 'plugins/moment/moment-with-locales.min.js' %}"></script>
-    <script src="{% static 'plugins/moment/moment-timezone-with-data-10-year-range.min.js' %}"></script>
-
-    <!-- bootstrap -->
+	<!-- jQuery -->
+	<script src="{% static 'plugins/jquery/jquery.min.js' %}"></script>
+	
+	<!-- Bootstrap -->
+	<script src="{% static 'plugins/bootstrap/js/bootstrap.bundle.min.js' %}"></script>
     <link rel="stylesheet" href="{% static 'plugins/bootstrap/css/bootstrap.min.css' %}" >
-    <script src="{% static 'plugins/bootstrap/js/bootstrap.bundle.min.js' %}"></script>
+	
+	<!-- overlayScrollbars -->
+	<script src="{% static 'plugins/overlayScrollbars/js/jquery.overlayScrollbars.min.js' %}"></script>
+    <link rel="stylesheet" href="{% static 'plugins/overlayScrollbars/css/OverlayScrollbars.min.css' %}" >
 
-    <!-- bootstrap datetimepicker -->
-    <link rel="stylesheet" type="text/css" href="{% static 'plugins/bootstrap-datetimepicker/css/bootstrap-datetimepicker.min.css' %}">
-	  <script src="{% static 'plugins/bootstrap-datetimepicker/js/bootstrap-datetimepicker.min.js' %}"></script>
+	<!-- AdminLTE -->
+	<script src="{% static 'plugins/adminlte/js/adminlte.min.js' %}"></script>
+    <link rel="stylesheet" href="{% static 'plugins/adminlte/css/adminlte.min.css' %}" >
+	
+	<!-- select2 -->
+	<script src="{% static 'plugins/select2/js/select2.full.min.js' %}"></script>
+    <link rel="stylesheet" href="{% static 'plugins/select2/css/select2.min.css' %}">
 
-    <!-- select2 -->
-    <link rel="stylesheet" type="text/css" href="{% static 'plugins/select2/css/select2.min.css' %}">
-    <link rel="stylesheet" href="{% static 'plugins/select2/css/select2-bootstrap4.min.css' %}">
-    <script src="{% static 'plugins/select2/js/select2.full.min.js' %}"></script>
+	<!-- Font Awesome -->
+	<script src="https://kit.fontawesome.com/cde9b9d9b2.js" crossorigin="anonymous"></script>
 
-    <!-- Font Awesome -->
-	  <script src="https://kit.fontawesome.com/cde9b9d9b2.js" crossorigin="anonymous"></script>
+</head>
 
-    <!-- github buttons -->
-    <script src="{% static 'plugins/github/buttons.min.js' %}"></script>
+<body class="hold-transition sidebar-mini layout-fixed">
+<div class="wrapper">
+<!-- Preloader -->
+  <div class="preloader flex-column justify-content-center align-items-center" >
+   <img class="animation__shake" src="{% static 'img/hc_vault_logo.svg' %}" alt="Logo" height="60" width="60">
+  </div>
+  
+<!-- Navbar -->
+<nav class="main-header navbar navbar-expand navbar-dark navbar-dark">
+	 <!-- Left navbar links -->
+    <ul class="navbar-nav">
+      <li class="nav-item">
+    <a class="nav-link" data-widget="pushmenu" href="#" id="action" role="button"><i class="fas fa-bars"></i></a>
+      </li>
+		</ul>
+		
+	<ul class="navbar-nav ml-auto">	 
+	</ul>
+	</nav>
 
-    <!-- load only USDT pairs-->
-    <script>
-      $.ajax({
-        url: 'https://api.binance.com/api/v1/exchangeInfo',
-        success: function(data) {
-          filterSymbols(data)
-          }
-      })
-      function filterSymbols(data) {
-        const quote = 'USDT'
-        const allSymbols = data.symbols
-        const USDTpairs = allSymbols.map(
-        (x)=> {
-            if (x.quoteAsset.includes(quote) && x.status === 'TRADING') {
-                return x.baseAsset
-                }
-            }
-        ).filter((x)=> {if(x){return x}})
+ <!-- Main Sidebar Container -->
+  <aside class="main-sidebar sidebar-dark-primary elevation-4">
+  <!-- Brand Logo -->
+		<a class="brand-link" href="#">
+       <img src="{% static 'img/hc_vault_logo.svg' %}" alt="Logo" class="brand-image" style="opacity: .8">
+      <span class="brand-text font-weight-light"><h4><strong>Vault</strong> Licenses</h4></span>
+		 </a>
+		
 
-        const regex1 = /UP$/
-        const regex2 = /DOWN$/
-        const regex3 = /BULL$/
-        const regex4 = /BEAR$/
-        const garbage1 = $.grep(USDTpairs, function (e) {
-          return regex1.test(e);
-        });
-        const garbage2 = $.grep(USDTpairs, function (e) {
-          return regex2.test(e);
-        });
-        const garbage3 = $.grep(USDTpairs, function (e) {
-          return regex3.test(e);
-        });
-        const garbage4 = $.grep(USDTpairs, function (e) {
-          return regex4.test(e);
-        });
-        const marginCoins1 = $.merge(garbage1, garbage2)
-        const marginCoins2 = $.merge(garbage3, garbage4)
-        const marginCoins = $.merge(marginCoins1, marginCoins2)
-        const filteredUSDTpairs = $.grep(USDTpairs, function(value) {
-          return $.inArray(value, marginCoins) < 0;
-        });
-        let $select = $('#pairs'); 
-        $select.find('option').remove();  
-        $.each(filteredUSDTpairs,function(key, value)
-        {
-          $select.append('<option value=' + key + '>' + value + '</option>');
-        });
-      }
-    </script>
+    <!-- Sidebar -->
+    <div class="sidebar">  
+				
+	<!-- Sidebar Menu -->
+      <nav class="mt-2">
+        <ul class="nav nav-pills nav-sidebar flex-column" data-widget="treeview" role="menu" data-accordion="false">
+		
+           <li class="nav-item">
+		     <div id="mobilemenu" >
+			</div>
+		  
+		<li class="nav-item">
+            <a href="#" class="nav-link">
+              <i class="fas fa-computer nav-icon"></i>
+              <p>
+                Home
+              </p>
+            </a>
+          </li>
+	   
+          <li class="nav-item">
+            <a href="#" class="nav-link">
+              <i class="fas fa-gear nav-icon"></i>
+              <p>
+                Impostazioni
+              </p>
+            </a>
+          </li>
 
-    <!-- initialize tooltip, timezone and datetimepicker plugins -->
-    <script>
-    $(function () {
-      // bootstrap tooltip
-      $('[data-toggle="tooltip"]').tooltip();
+      </ul>
+	</nav>
+      <!-- /.sidebar-menu -->
+    </div>
+    <!-- /.sidebar -->
+  </aside>
 
-      function addIcons (icon) {
-        if (!icon.id) { return icon.text; }
-          let $icon = $(
-            '<span><img src="{% static 'images/coins/' %}' + icon.text +
-            '.png"/> '  + icon.element.text + '</span>'
-          );
-        return $icon;
-      };
-      $('#pairs').select2({
-        theme: 'bootstrap4',
-        templateResult: addIcons,
-      })
+<!-- /.content-wrapper -->
+  <footer class="main-footer">
+    <div class="float-right d-none d-sm-inline-block">
+      <b>Version</b> 0.1.0
+    </div>
+  </footer>
 
-      // get user timezone and fill input field
-      usr_tz = moment.tz.guess()
-      $("#tz").val(usr_tz)
+  <!-- Control Sidebar -->
+  <aside class="control-sidebar control-sidebar-dark">
+  </aside>
+  <!-- /.control-sidebar -->
+	</div>
+<!-- ./wrapper -->
 
-      // bootstrap datetimepicker
-      $("#start_time").datetimepicker({
-		    format: "HH:mm",
-		    stepping: 1,
-      });
-
-    })
-    </script>
-
-  </head>
-  <body>
-
-<div class="container-fluid">
-  <h3 class="display-4"><b>B</b>inance <b>A</b>utomatic <b>S</b>top <b>D</b>aemon</h3>
-</div>
-    
-  <div class="container-fluid">
-
-  <form id="Form" action="" method="post">
-    {% csrf_token %}
-      <div class="card card-outline card-primary">
-          <div class="card-body">
-
-            <div class="row"><!-- first row -->
-                <div class="col-sm">
-                    <div class="form-group">
-                      <label for="api_key"><i class='fa fa-key'></i> API Key</label> 
-                      <input type="password" class="form-control pull-right" id="api_key" name="api_key" data-toggle="tooltip" title="your Binance.com API Key" placeholder="your Binance.com API Key">
-                    </div>
-                  </div>
-                  <div class="col-sm">
-                    <div class="form-group">
-                      <label for="api_secret"><i class='fa fa-key'></i> API Secret Key</label> 
-                      <input type="password" class="form-control pull-right" id="api_secret" name="api_secret" data-toggle="tooltip" title="your Binance.com API Secret Key" placeholder="your Binance.com API Secret Key">
-                    </div>
-                  </div>
-                  <div class="col-sm">
-                    <div class="form-group">
-                      <label for="tz"><i class="fa fa-map-location"></i> Timezone</label> 
-                      <input type="text" class="form-control pull-right" id="tz" name="tz" disabled>
-                    </div>
-                  </div>
-                  <div class="col-sm">
-                  <div class="form-group">
-                    <label for="start_time"><i class='fa fa-clock'></i> Start time</label> 
-                    <input type="text" class="form-control pull-right" id="start_time" name="start_time" title="Select Start time" placeholder="Select Start time">
-                  </div>
-                </div>
-                <div class="col-sm">
-                  <div class="form-group">
-                    <label for="active_hours"><i class='fa fa-clock'></i> Active hours</label> 
-                    <input type="text" class="form-control pull-right" name="active_hours" data-toggle="tooltip" title="Insert how many working hours. 24 equals to all day" placeholder="Enter Active hours">
-                  </div>
-                </div>
-            </div><!-- end first row -->
-
-            <div class="row"><!-- second row -->
-              <div class="col-sm-2">
-                <div class="form-group">
-                  <label for="order_type"><i class='fa fa-sort'></i> Order type</label> 
-                  <select id="order_type" name="order_type" class="form-control" style="width: 100%;">
-                    <option value="tp">Take Profit</option>
-                    <option value="sl">Stop Loss</option>
-                    <option value="oco">OCO</option>
-                  </select> 
-                </div>
-              </div>
-
-              <div id="TP">
-                <div class="col-sm">
-                  <input type="text" class="form-control pull-right" name="tp_s" data-toggle="tooltip" title="Take Profit Stop percentage" placeholder="Take Profit Stop +%">
-                  <input type="text" class="form-control pull-right" name="tp_l" data-toggle="tooltip" title="Take Profit Limit percentage" placeholder="Take Profit Limit +%">
-                </div>
-              </div>
-
-              <div id="OCO">
-                <div class="col-sm">
-                  <input type="text" class="form-control pull-right" name="oco_tp" data-toggle="tooltip" title="OCO Take Profit percentage" placeholder="OCO Take Profit +%">
-                  <input type="text" class="form-control pull-right" name="oco_sl_s" data-toggle="tooltip" title="OCO Stop Loss Stop percentage, must be LOWER than market price WHEN order will be placed" placeholder="OCO Stop Loss Stop -%">
-                  <input type="text" class="form-control pull-right" name="oco_sl_l" data-toggle="tooltip" title="OCO Stol Loss Limit percentage, must be HIGHER than market price WHEN order will be placed" placeholder="OCO Stop Loss Limit -%">
-                </div>
-              </div>
-
-              <div id="SL">
-                <div class="col-sm">
-                  <input type="text" class="form-control pull-right" name="sl_s" data-toggle="tooltip" title="Stop Loss Stop percentage" placeholder="Stop Loss Stop -%">
-                  <input type="text" class="form-control pull-right" name="sl_l" data-toggle="tooltip" title="Stop Loss Limit percentage" placeholder="Stop Loss Limit -%">
-                </div>
-              </div>
-
-              <div class="btn-group-toggle" data-toggle="buttons">
-                <label class="btn btn-light active">
-                  <input type="checkbox" id="email_alert"><i class='fa fa-envelope'></i> Email alert
-                </label>
-              </div>
-
-              <div id="email_fields">
-                <div class="col-sm">
-                  <div class="form-group">
-                    <input type="email" class="form-control pull-right" id="sender_email" name="sender_email" data-toggle="tooltip" title="sender email address (Gmail only)" placeholder="Gmail sender address">
-                    <input type="password" class="form-control pull-right" id="password" name="password" data-toggle="tooltip" title="Gmail app password" placeholder="Gmail app password">
-                    <input type="email" class="form-control pull-right" id="receiver_email" name="receiver_email" data-toggle="tooltip" title="receiver email address" placeholder="Receiver email address">
-                  </div>
-                </div>
-              </div>
-
-            </div><!-- end second row -->
-
-            <div class="row"><!-- third row -->
-              <div class="col-sm-2">
-                <div class="btn-group-toggle" data-toggle="buttons">
-                  <label class="btn btn-light active">
-                  <input type="checkbox" id="toggle_pairs" checked><i class='fa fa-coins'></i> All pairs
-                  </label>
-                </div>
-              </div>
-              <div class="col-sm">
-                <div class="form-group">
-                  <div id="pairs_selection">
-                    <div class="col-sm-14">
-                      <div class="form-group">
-                        <label for="pairs">USDT pairs</label>
-                        <select id="pairs" name="pairs" id="pairs" class="form-control" style="width: 100%;">
-                        </select> 
-                      </div>
-                    </div>
-                  </div>
-                </div>
-              </div>
-            </div><!-- end third row -->
-
-            <div class="col-sm">
-             <div class="form-group">
-               </div>
-            </div><!-- empty row -->
-
-            <div id="btn_validate">
-              <div class="row">
-                <button class="submit btn btn-primary btn-block" type="submit">Start</button>
-              </div>
-            </div>
-
-            <!-- Modal -->
-            <div class="modal fade" id="staticBackdrop" data-backdrop="static" data-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
-              <div class="modal-dialog">
-                <div class="modal-content">
-                  <div class="modal-header text-center">
-                    <h5 class="modal-title" id="staticBackdropLabel">Do not close this page!</h5>
-                  </div>
-                  <div class="modal-body">
-                    <div class="d-flex justify-content-center">
-                      <div class="spinner-border text-primary" role="status">
-                      </div>
-                    </div>
-                  </div>
-                  <div class="modal-footer text-center">
-                    Loading...
-                  </div>
-                </div>
-              </div>
-            </div>
-
-            <div class="col-sm">
-              <div class="form-group">
-                </div>
-            </div><!-- empty row -->
-
-            <div class="d-flex justify-content-center">
-              <a class="github-button" href="https://github.com/escomputers/BASD" data-icon="octicon-star" data-size="large" data-show-count="true" aria-label="Star escomputers/BASD on GitHub">Star</a>
-              <a class="github-button" href="https://github.com/escomputers/BASD/fork" data-icon="octicon-repo-forked" data-size="large" data-show-count="true" aria-label="Fork escomputers/BASD on GitHub">Fork</a>
-              <a class="github-button" href="https://github.com/escomputers/BASD/discussions" data-icon="octicon-comment-discussion" data-size="large" aria-label="Discuss escomputers/BASD on GitHub">Discuss</a>
-            </div>
-
-          </div><!-- end card-body -->
-      </div><!-- end ard card-outline card-primary  -->
-  </form>
-</div>
 </body>
-<script>
-	$().ready(function() {
-    // define global scope variable
-    let usr_data = {};
-    let id = {};
-
-    // hide email and order fields on page load
-    $("#email_fields, #OCO, #SL, #pairs_selection").hide();
-
-    // show order fields basing on selected value
-    $("#order_type").change(function() {
-      selected_value = $("#order_type").val()
-      if (selected_value === 'sl') {
-        $("#OCO, #TP").hide();
-        $("#SL").show();
-      } else if (selected_value === 'oco') {
-        $("#SL, #TP").hide();
-        $("#OCO").show();
-      } else {
-        $("#SL, #OCO").hide();
-        $("#TP").show();
-      }
-    });
-
-    // show email fields basing on checkbox
-    $("#email_alert").change(function() {
-      checkbox_status = $("#email_alert").prop("checked")
-      if (checkbox_status === true) {
-        $("#email_fields").show();
-      } else {
-        $("#email_fields").hide();
-      }
-    });
-
-    // show pairs selection basing on checkbox
-    $("#toggle_pairs").change(function() {
-      checkbox_status = $("#toggle_pairs").prop("checked")
-      if (checkbox_status === true) {
-        $("#pairs_selection").hide();
-      } else {
-        $("#pairs_selection").show();
-      }
-    });
-
-    // default action when all fields are valid
-    $.validator.setDefaults({
-		  submitHandler: function() {
-        fetchInput()
-		  }
-	  });
-
-    // add method for checking spaces
-    $.validator.addMethod("noSpace", function(value, element) { 
-      return value.indexOf(" ") < 0 && value != ""; 
-      }, "No spaces"
-    );
-
-    // add method for Gmail sender address
-    $.validator.addMethod("Gmail", function(value, element) { 
-      let stringCheck = "@gmail.com";
-      return (value.lastIndexOf(stringCheck) === value.length - stringCheck.length) > 0 && value != "";
-      }, "Invalid Gmail address"
-    );
-
-    // add method for receiver email address
-    $.validator.addMethod("my_email", function(value, element) { 
-      let filter = /^([a-zA-Z0-9_.+-])+\@(([a-zA-Z0-9-])+\.)+([a-zA-Z0-9]{2,4})+$/;
-      return filter.test(value) && value != "";
-      }, "Invalid email address"
-    );
-
-    // add method for api key not equal to api secret
-    $.validator.addMethod("notEqualTo", function(value, element, param) {
-      return this.optional(element) || value != param;
-    }, "API fields cannot be the same"
-    );
-
-    // rule grouping for order percentages
-    let ruleSetPercentage = {
-        required: true,
-        number: true,
-        range: [0.5, 200],
-        maxlength: 6
-    };
-
-  	// validate signup form on keyup and submit
-		$("#Form").validate({
-      validClass: "font-weight-bold alert-success",
-      errorClass: "font-weight-bold alert-danger",
-			rules: {
-				api_key: {
-					required: true,
-					minlength: 64,
-          noSpace: true,
-          notEqualTo: function() {return $('#api_secret').val()}
-				},
-        api_secret: {
-					required: true,
-					minlength: 64,
-          noSpace: true,
-          notEqualTo: function() {return $('#api_key').val()}
-				},
-        start_time: {
-          required: true
-        },
-        active_hours: {
-          required: true,
-          number: true,
-          range: [1, 24]
-        },
-        order_type: {
-          required: true
-        },
-        tp_s: ruleSetPercentage,
-        tp_l: ruleSetPercentage,
-        oco_tp: ruleSetPercentage,
-        oco_sl_s: ruleSetPercentage,
-        oco_sl_l: ruleSetPercentage,
-        sl_s: ruleSetPercentage,
-        sl_l: ruleSetPercentage,
-        sender_email: {
-          required: true,
-          Gmail: true
-        },
-        receiver_email: {
-          required: true,
-          my_email: true
-        },
-				password: {
-					required: true,
-					minlength: 8,
-          noSpace: true
-				},
-			},
-		  messages: {
-        api_key: {
-          minlength: "Your API Key must consist of at least 64 characters"
-        },
-        api_secret: {
-          minlength: "Your API Secret Key must consist of at least 64 characters"
-        },
-				password: {
-					minlength: "Your password must be at least 8 characters long"
-				}
-      },
-
-      // change css class to error
-      highlight: function (element, errorClass, validClass) {
-        $(element).addClass(errorClass).removeClass("font-weight-bold alert-success");
-      },
-
-      // change css class to success
-      unhighlight: function (element, errorClass, validClass) {
-        $(element).removeClass(errorClass).addClass("font-weight-bold alert-success");
-      }
-
-		});
-
-    // get all valid input fields and make a dictionary
-    function fetchInput() {
-      $(":input").each(function() {
-        usr_data[$(this).attr("name")] = $(this).val();
-      });
-
-      // get coin selection and add to usr_data
-      if ($("#pairs").is(":visible")) {
-        const coin = $( "#pairs option:selected" ).text();
-        usr_data.pairs = coin;
-      }
-
-      // call backend
-      ajax_call()
-    }
-
-    // get short job uuid
-    $.ajax({
-      url: 'https://uuid.rocks/short',
-        success: function(data) {
-          id = data;
-          uuid(id)
-      }
-    })
-
-    // add value to kv object
-    function uuid(id) {
-      usr_data.id = id;
-    }
-
-    // ajax call
-    function ajax_call() {
-      $.ajax({
-        url: "{% url 'getData' %}",
-        dataType: "text",
-        method: "POST",
-        data : {
-        csrfmiddlewaretoken:$('input[name=csrfmiddlewaretoken]').val(),
-        data: JSON.stringify(usr_data),
-        },
-        success: function(data, status, xhr){
-        },
-        error: function(xhr, status, error){
-        }
-      })
-
-      loading();
-    }
-
-    function sleep (time) {
-      return new Promise((resolve) => setTimeout(resolve, time));
-    }
-
-    // loading
-    function loading() {
-      $('#btn_validate').hide()
-      $('#staticBackdrop').modal('show')
-
-      // delete useless data from object
-      ;[ 'api_key', 'api_secret', 'csrfmiddlewaretoken', 'sender_email', 'password' ].forEach(i => delete usr_data[i])
-
-      // save necessary values for next page
-      const data = JSON.stringify(usr_data)
-      sessionStorage.setItem("data", data)
-
-      // show loading div for 4 secs
-      sleep(4000).then(() => {
-        window.location.href = "/resume/";
-      });
-    }
-
-}); // end main $().ready(function()
-</script>
 </html>
