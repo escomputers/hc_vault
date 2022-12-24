@@ -41,3 +41,14 @@ CACHES = {
 python manage.py runserver
 python manage.py qcluster
 ```
+
+7. Create scheduled job
+login to http://127.0.0.1:8000/admin/django_q/schedule/
+set required parameters:
+```
+Name: <whatever>
+Func: modules.vault.get_entities
+Schedule Type: <whatever>
+Cluster: VaultCrawler
+
+```
