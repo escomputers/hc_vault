@@ -1,5 +1,6 @@
 django==4.1.4
 docker
+requests
 django-q
 requests
 certifi
