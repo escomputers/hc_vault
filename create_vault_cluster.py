@@ -4,7 +4,10 @@ import time
 
 docker_client = docker.from_env()
 port = 8200
-for i in range(1,3):
+
+nodes_number = int(input('Type how many Vault nodes you need: '))
+
+for i in range(nodes_number):
     port += 1
     vault_config = {'VAULT_LOCAL_CONFIG': '{"storage": {"file": {"path": "/vault/file"}}, "listener": [{"tcp": {"address": "0.0.0.0:' + str(port) + '",' + ' "tls_disable": "true"}}], "default_lease_ttl": "168h", "max_lease_ttl": "720h", "ui": "true"}'}
 

@@ -1,73 +1,149 @@
 {% extends "index.html" %}
 
 {% block content %}
- <div class="content-wrapper">
-    <!-- Content Header (Page header) -->
-    <section class="content-header">
-      <div class="container-fluid">
-        <div class="row mb-2">
-          <div class="col-sm-6">
-  <h3 class="text-bold text-dark">Settings</h3>
-</div>
-</div>
-  </div>
-  </section>
-   
-
-    <!-- Main content -->
-    <section class="content">
-      <div class="container-fluid">
-		
-  <div class="col">
-	<div class="sticky-top mb-3">
-   <div class="card">
-    <div class="card-header">
-    <h4>Alerts</h4>
-    </div>
-	
-	
-	<div class="card-body">
-		<table id="pending_table" class="table table-bordered table-hover">
-		<thead>
-		<tr>
-		<th>ID</th>
-		<th>Nome</th>
-		<th>Documento</th>
-		<th>Prossimo avvio</th>
-		<th>Stato</th>
-		</tr>
-		</thead>
-		<tbody>
-		
-	
-		<tr>
-		<td></td>
-		<td></td>
-		<td></td>
-		<td></td>
-		
-		<td><span class="badge bg-warning"><font size="3.1em">In attesa</font></span></td>
-		</tr>
-		
-		</tbody>
-		</table>
+<div class="content-wrapper">
+<!-- Content Header (Page header) -->
+  <section class="content-header">
+    <div class="container-fluid">
+      <div class="row mb-2">
+        <div class="col-sm-6">
+  		  <h3 class="text-bold text-dark">Settings</h3>
 		</div>
+      </div>
+    </div>
+  </section>
+
+<!-- Main content -->
+<section class="content">
+  <div class="container-fluid">
+		
+    <div class="col">
+	  <div class="sticky-top mb-3">
+   	    <div class="card">
+          <div class="card-header">
+            <h4>Alerts</h4>
+          </div>
 	
-</div>
-<!-- /.card -->
+	      <div class="card-body">
+			<form id="Form" action="" method="post">
+			  {% csrf_token %}
 
-</div>
-<!-- /.sticky-top mb-3 -->
+			  <div class="form-group">
 
-</div>
-<!-- /.col-md-3 -->
+				<!-- Vault URL -->
+				<div class="input-group mb-3">
+				  <div class="input-group-prepend">
+				    <span class="input-group-text"><i class="fas fa-globe"></i></span>
+				  </div>
+				  <input type="text" name="vault_node" id="vault_node" placeholder="Vault URL" class="form-control pull-right">
+				</div>
 
-</div>
-<!-- /.container-fluid -->
+				<!-- Alert Toggle -->
+				<div class="btn-group-toggle" data-toggle="buttons">
+					<label class="btn btn-light active">
+					  <input type="checkbox" id="email_alert"><i class='fa fa-envelope'></i> Email alert
+					</label>
+				</div>
+				<div id="email_fields">
+				  <div class="form-group">
+					<input type="email" class="form-control pull-right" name="email" id="email" placeholder="email">
+					<input type="email" class="form-control pull-right" name="cc" id="cc" placeholder="cc">
+					<input type="email" class="form-control pull-right" name="cc2" id="cc2" placeholder="cc2">
+					<input type="email" class="form-control pull-right" name="cc3" id="cc3" placeholder="cc3">
+				  </div>
+				</div>
+
+				<!-- Pulsante submit -->
+				<button class="btn btn-primary" type="submit" name="submit" value="Submit">Add</button>
+			 
+		      </div>
+			  <!-- /.form-group -->
+			</form>
+	      </div>
+		  <!-- /.card-body -->
+
+	    </div>
+		<!-- /.card -->
+
+	  </div>
+	  <!-- /.sticky-top mb-3 -->
+
+    </div>
+    <!-- /.col-md-3 -->
+
+  </div>
+  <!-- /.container-fluid -->
 
 </section>
-<!-- /.content -->
-
 </div>
 <!-- /.content-wrapper -->
+<script>
+$().ready(function() {
+  $("#email_fields").hide();
+
+  // show email fields basing on checkbox
+  $("#email_alert").change(function() {
+	checkbox_status = $("#email_alert").prop("checked")
+	if (checkbox_status === true) {
+		$("#email_fields").show();
+	} else {
+		$("#email_fields").hide();
+	}
+  });
+
+  // default action when all fields are valid
+  $.validator.setDefaults({
+	submitHandler: function() {
+    // pass
+	}
+  });
+
+  // add method for receiver email address
+  $.validator.addMethod("check_email", function(value, element) { 
+  let filter = /^([a-zA-Z0-9_.+-])+\@(([a-zA-Z0-9-])+\.)+([a-zA-Z0-9]{2,4})+$/;
+  return filter.test(value) && value != "";
+  }, "Invalid email address"
+  );
+
+  // validate signup form on keyup and submit
+  $("#Form").validate({
+	validClass: "font-weight-bold alert-success",
+	errorClass: "font-weight-bold alert-danger",
+	rules: {
+	  vault_node: {
+		required: true,
+		url: true
+	  },
+	  email: {
+		required: true,
+		check_email: true
+	  },
+	  cc: {
+		required: true,
+		check_email: true
+	  },
+	  cc2: {
+		required: true,
+		check_email: true
+	  },
+	  cc3: {
+		required: true,
+		check_email: true
+	  },
+	},
+
+    // change css class to error
+    highlight: function (element, errorClass, validClass) {
+      $(element).addClass(errorClass).removeClass("font-weight-bold alert-success");
+    },
+
+    // change css class to success
+    unhighlight: function (element, errorClass, validClass) {
+      $(element).removeClass(errorClass).addClass("font-weight-bold alert-success");
+    }
+
+  });
+
+});
+</script>
 {% endblock %}

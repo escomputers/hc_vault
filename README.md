@@ -1,13 +1,41 @@
+### whoami
+Django web app, with Django Q as multiprocessing task queue for fetching data from a list of Hashicorp Vault nodes/cluster and showing to the browser with bootstrap and adminlte.
+
 ### pre-requisites
 - Docker
-- Vault
+- Vault nodes/cluster
+- Python >= 3.9
 
 ### getting started
-1. Get Vault
+1. If you need some Vault nodes
 ```
-docker run --cap-add=IPC_LOCK -e 'VAULT_LOCAL_CONFIG={"storage": {"file": {"path": "/vault/file"}}, "listener": [{"tcp": { "address": "0.0.0.0:8200", "tls_disable": true}}], "default_lease_ttl": "168h", "max_lease_ttl": "720h", "ui": true}' -p 8200:8200 vault server
+python -m pip install -r dev-requirements.txt
+python create_vault_cluster.py
 ```
-NB: Vault must be unsealed
+This will create N Vault nodes (using Docker official image) with this config:
+- Seal type: shamir
+- Storage type: file (non HA)
+- UI enabled
+- TLS disabled
+- Docker volume ```/vault/logs```, to use for writing persistent audit logs. By default nothing is written here; the file audit backend must be enabled with a path under this directory.
+- Docker volume ```/vault/file```, to use for writing persistent storage data when using the file data storage plugin. By default nothing is written here.
+
+Nodes are nitialized with default secret keyshares and key threshold of 1.
+
+Each Vault will listen at ```http://0.0.0.0:<PORT>```
+where ```PORT``` will change based on the Vault node number, starting from 8200.
+
+E.g. If 5 nodes are created, you have:
+```
+http://localhost:8200
+http://localhost:8201
+http://localhost:8202
+http://localhost:8203
+http://localhost:8204
+```
+Unseal keys and root tokens are within ```vault_data.txt```
+
+NB: Vault nodes must be unsealed
 
 2. Set env variables
 ```
@@ -16,6 +44,7 @@ VAULT TOKEN
 ```
 3. Django init
 ```
+python -m pip install -r prod-requirements.txt
 python manage.py migrate
 python manage.py createsuperuser
 ```

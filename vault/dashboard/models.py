@@ -3,6 +3,12 @@ from django.db import models
 # model for vault entites
 class Node(models.Model):
     vault_node = models.CharField(max_length=100, blank=True, null=True)
+    alert = models.BooleanField(default=False)
+    email = models.EmailField(blank=True, null=True)
+    cc = models.EmailField(blank=True, null=True)
+    cc2 = models.EmailField(blank=True, null=True)
+    cc3 = models.EmailField(blank=True, null=True)
+
 
     def __str__(self):
         return str(self.vault_cluster)
