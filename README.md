@@ -1,6 +1,9 @@
 ### whoami
 Django web app, with Django Q as multiprocessing task queue for fetching data from a list of Hashicorp Vault nodes/cluster and showing to the browser with bootstrap and adminlte.
 
+This PoC is based on fetching Vault entities and get notified via email if a specific
+threshold is being reached.
+
 ### pre-requisites
 - Docker
 - Vault nodes/cluster

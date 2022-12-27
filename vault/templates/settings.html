@@ -13,88 +13,137 @@
     </div>
   </section>
 
-<!-- Main content -->
-<section class="content">
-  <div class="container-fluid">
-		
-    <div class="col">
-	  <div class="sticky-top mb-3">
-   	    <div class="card">
-          <div class="card-header">
-            <h4>Alerts</h4>
-          </div>
-	
-	      <div class="card-body">
+	<!-- Main content -->
+	<section class="content">
+		<div class="container-fluid">
+
 			<form id="Form" action="" method="post">
-			  {% csrf_token %}
+			{% csrf_token %}
 
-			  <div class="form-group">
+						<div class="card"><!-- first card -->
+							<div class="card-header">
+								<h5>
+									<i class="fas fa-server"></i>
+									&nbsp;Add nodes
+								</h5>
+							</div>
+							<div class="card-body">
+								<div class="row">
 
-				<!-- Vault URL -->
-				<div class="input-group mb-3">
-				  <div class="input-group-prepend">
-				    <span class="input-group-text"><i class="fas fa-globe"></i></span>
-				  </div>
-				  <input type="text" name="vault_node" id="vault_node" placeholder="Vault URL" class="form-control pull-right">
-				</div>
+								<!-- Vault URL fields-->
+								<div class="field_wrapper">
+									<div class="col-sm">
+										<div class="input-group mb-3">
+											<div class="input-group-append">
+												<span class="input-group-text"><i class="fas fa-globe"></i></span>
+											</div>
+											<div>
+											<input type="text" name="vault_node[]" placeholder="Vault URL" class="form-control pull-right">
+											</div>
+										</div>
+									</div>
+								</div>
 
-				<!-- Alert Toggle -->
-				<div class="btn-group-toggle" data-toggle="buttons">
-					<label class="btn btn-light active">
-					  <input type="checkbox" id="email_alert"><i class='fa fa-envelope'></i> Email alert
-					</label>
-				</div>
-				<div id="email_fields">
-				  <div class="form-group">
-					<input type="email" class="form-control pull-right" name="email" id="email" placeholder="email">
-					<input type="email" class="form-control pull-right" name="cc" id="cc" placeholder="cc">
-					<input type="email" class="form-control pull-right" name="cc2" id="cc2" placeholder="cc2">
-					<input type="email" class="form-control pull-right" name="cc3" id="cc3" placeholder="cc3">
-				  </div>
-				</div>
+									<!-- Add URL button -->
+									<div class="col-sm">
+										<div class="input-group mb-3">
+											<button type="button" class="btn btn-light" id="add"><i class="fas fa-plus"></i>
+										</div>
+									</div>
 
-				<!-- Pulsante submit -->
-				<button class="btn btn-primary" type="submit" name="submit" value="Submit">Add</button>
-			 
-		      </div>
-			  <!-- /.form-group -->
+								</div><!-- row -->
+							</div><!-- card-body -->
+
+						</div><!-- card -->
+
+						<div class="card"><!-- second card -->
+								<div class="card-header">
+									<button class="btn" type="button" data-toggle="collapse" data-target="#collapseThreshold" aria-expanded="false" aria-controls="collapseThreshold">
+									<h5>
+										<i class="fas fa-bell"></i>
+										&nbsp;Set threshold
+									</h5>
+								</button>
+								</div>
+
+								<div class="collapse width" id="collapseThreshold">
+									<div class="card-body">
+										<div class="col-sm-6">
+											<div class="input-group mb-3">
+												<div class="input-group-prepend">
+													<span class="input-group-text"><i class="fas fa-id-card"></i></span>
+												</div>
+												<input type="text" name="threshold" id="threshold" placeholder="License threshold" class="form-control pull-right">
+											</div>
+									</div>
+							</div><!-- div collapsable-->
+						</div><!-- second card -->
+
+						<div class="card"><!-- third card -->
+							<div class="card-header">
+								<button class="btn" type="button" data-toggle="collapse" data-target="#collapseEmail" aria-expanded="false" aria-controls="collapseEmail">
+								<h5>
+									<i class="fas fa-envelope"></i>
+									&nbsp;Set alerts
+								</h5>
+							</button>
+							</div>
+
+							<div class="collapse width" id="collapseEmail">
+								<div class="card-body">
+									<input type="email" class="form-control pull-right" name="email" id="email" placeholder="Email">
+									<input type="email" class="form-control pull-right" name="cc" id="cc" placeholder="Cc">
+									<input type="email" class="form-control pull-right" name="cc2" id="cc2" placeholder="Cc2">
+									<input type="email" class="form-control pull-right" name="cc3" id="cc3" placeholder="Cc3">
+							  </div>
+							</div><!-- div collapsable -->
+						</div><!-- third card -->
+
+			<!-- Pulsante submit -->
+			<button class="submit btn btn-primary btn-block" type="submit" name="submit" value="Submit">Submit</button>
+
 			</form>
-	      </div>
-		  <!-- /.card-body -->
+			</div><!-- container-fluid -->
 
-	    </div>
-		<!-- /.card -->
+	</section>
+</div><!-- content-wrapper -->
 
-	  </div>
-	  <!-- /.sticky-top mb-3 -->
+<script>
+	$(document).ready(function(){
+		const maxField = 10; //Input fields increment limitation
+		const addButton = $('#add'); //Add button selector
+		const wrapper = $('.field_wrapper'); //Input field wrapper
+		let fieldHTML = '<div><input type="text" name="vault_node[]" class="vault_node" placeholder="Vault URL" class="form-control pull-right"><button type="button" class="btn btn-light" id="remove"><i class="fas fa-minus"></i></button></div>'; //New input field html 
+		let x = 1; //Initial field counter is 1
+		
+		//Once add button is clicked
+		$(addButton).click(function(){
+			//Check maximum number of input fields
+			if(x < maxField){ 
+				x++; //Increment field counter
+				$(wrapper).append(fieldHTML); //Add field html
+				$("input[name^='vault_node']").rules("add", {
+					required: true,
+					url: true
+				});
+			}
+		});
+		
+		//Once remove button is clicked
+		$(wrapper).on('click', '#remove', function(e){
+			e.preventDefault();
+			$(this).parent('div').remove(); //Remove field html
+			x--; //Decrement field counter
+		});
+	});
+</script>
 
-    </div>
-    <!-- /.col-md-3 -->
-
-  </div>
-  <!-- /.container-fluid -->
-
-</section>
-</div>
-<!-- /.content-wrapper -->
 <script>
 $().ready(function() {
-  $("#email_fields").hide();
-
-  // show email fields basing on checkbox
-  $("#email_alert").change(function() {
-	checkbox_status = $("#email_alert").prop("checked")
-	if (checkbox_status === true) {
-		$("#email_fields").show();
-	} else {
-		$("#email_fields").hide();
-	}
-  });
-
   // default action when all fields are valid
   $.validator.setDefaults({
 	submitHandler: function() {
-    // pass
+    //pass
 	}
   });
 
@@ -105,44 +154,49 @@ $().ready(function() {
   }, "Invalid email address"
   );
 
-  // validate signup form on keyup and submit
-  $("#Form").validate({
-	validClass: "font-weight-bold alert-success",
-	errorClass: "font-weight-bold alert-danger",
-	rules: {
-	  vault_node: {
-		required: true,
-		url: true
-	  },
-	  email: {
-		required: true,
-		check_email: true
-	  },
-	  cc: {
-		required: true,
-		check_email: true
-	  },
-	  cc2: {
-		required: true,
-		check_email: true
-	  },
-	  cc3: {
-		required: true,
-		check_email: true
-	  },
-	},
+	// validate signup form on keyup and submit
+	$("#Form").validate({
+		validClass: "font-weight-bold alert-success",
+		errorClass: "font-weight-bold alert-danger",
+		rules: {
+			vault_node: {
+				required: true,
+				url: true
+			},
+			threshold: {
+				required: true,
+				digits: true,
+				range: [1, 999999]
+			},
+			email: {
+			required: true,
+			check_email: true
+			},
+			cc: {
+			required: true,
+			check_email: true
+			},
+			cc2: {
+			required: true,
+			check_email: true
+			},
+			cc3: {
+			required: true,
+			check_email: true
+			},
+		},
+	
+		// change css class to error
+		highlight: function (element, errorClass, validClass) {
+			$(element).addClass(errorClass).removeClass("font-weight-bold alert-success");
+		},
 
-    // change css class to error
-    highlight: function (element, errorClass, validClass) {
-      $(element).addClass(errorClass).removeClass("font-weight-bold alert-success");
-    },
+		// change css class to success
+		unhighlight: function (element, errorClass, validClass) {
+			$(element).removeClass(errorClass).addClass("font-weight-bold alert-success");
+		}
 
-    // change css class to success
-    unhighlight: function (element, errorClass, validClass) {
-      $(element).removeClass(errorClass).addClass("font-weight-bold alert-success");
-    }
-
-  });
+	});
 
 });
 </script>
