@@ -48,6 +48,7 @@ VAULT TOKEN
 3. Django init
 ```
 python -m pip install -r prod-requirements.txt
+python manage.py makemigrations
 python manage.py migrate
 python manage.py createsuperuser
 ```
