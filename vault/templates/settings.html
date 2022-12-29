@@ -1,6 +1,31 @@
 {% extends "index.html" %}
 
 {% block content %}
+<style>
+	.tab {
+		display: none;
+	}
+	/* Make circles that indicate the steps of the form: */
+	.step {
+		height: 15px;
+		width: 15px;
+		margin: 0 2px;
+		background-color: #bbbbbb;
+		border: none;  
+		border-radius: 50%;
+		display: inline-block;
+		opacity: 0.5;
+	}
+	
+	.step.active {
+		opacity: 1;
+	}
+	
+	/* Mark the steps that are finished and valid: */
+	.step.finish {
+		background-color: #007bff;
+	}
+</style>
 <div class="content-wrapper">
 <!-- Content Header (Page header) -->
   <section class="content-header">
@@ -20,214 +45,262 @@
 			<form id="Form" action="" method="post">
 			{% csrf_token %}
 
-				<div class="card"><!-- first card -->
+			<div class="tab"><!-- first card -->
+				<div class="card">
 					<div class="card-header">
 							<h5>
 								<i class="fas fa-server"></i>
 								&nbsp;Add nodes
 							</h5>
-						</button>
 					</div>
 
 					<div class="card-body">
 						<div class="row">
-
-						<div class="field_wrapper">
-							<div class="col-sm">
+							<div class="col-sm-11">
 								<div class="input-group mb-3">
 									<div class="input-group-prepend">
 										<span class="input-group-text"><i class="fas fa-globe"></i></span>
 									</div><!-- input-group-prepend -->
-									<input type="text" name="vault_node[]" placeholder="Vault URL" class="form-control pull-right">
+									<input type="text" name="vault_node" placeholder="Vault URL" class="form-control pull-right">
 								</div><!-- input-group mb-3 -->
-							</div><!-- col-sm -->
-						</div><!-- field_wrapper -->
+							</div><!-- col-sm-11 -->
 
-							<!-- Add URL button -->
-							<div class="col-sm">
-								<div class="input-group mb-3">
+							<div class="col-sm-1"><!-- Add URLs button -->
 									<button type="button" class="btn add btn-light"><i class="fas fa-plus"></i>
-								</div>
 							</div>
-
+		
 						</div><!-- row -->
 					</div><!-- card-body -->
+				</div><!-- card -->
+			</div><!-- first tab -->
 
-			  </div><!-- first card -->
+			<div class="tab"><!-- second card -->
+				<div class="card">
+						<div class="card-header">
+							<h5>
+								<i class="fas fa-bell"></i>
+								&nbsp;Set threshold
+							</h5>
+						</div>
 
-						<div class="card" id="second"><!-- second card -->
-								<div class="card-header">
-									<button class="btn" type="button" data-toggle="collapse" data-target="#collapseThreshold" aria-expanded="false" aria-controls="collapseThreshold">
-									<h5>
-										<i class="fas fa-bell"></i>
-										&nbsp;Set threshold
-									</h5>
-								</button>
-								</div>
+						<div class="card-body">
+							<div class="col-sm-6">
+								<div class="input-group mb-3">
+									<div class="input-group-prepend">
+										<span class="input-group-text"><i class="fas fa-id-card"></i></span>
+									</div><!-- input-group-prepend -->
+									<input type="text" name="threshold" id="threshold" placeholder="License threshold" class="form-control pull-right">
+								</div><!-- input-group mb-3 -->
+							</div><!-- col-sm -->
+						</div><!-- card body -->
+				</div><!-- card -->
+			</div><!-- second tab -->
 
-								<div class="collapse width" id="collapseThreshold">
-									<div class="card-body">
-										<div class="col-sm-6">
-											<div class="input-group mb-3">
-												<div class="input-group-prepend">
-													<span class="input-group-text"><i class="fas fa-id-card"></i></span>
-												</div><!-- input-group-prepend -->
-												<input type="text" name="threshold" id="threshold" placeholder="License threshold" class="form-control pull-right">
-											</div><!-- input-group mb-3 -->
-										</div><!-- col-sm -->
-									</div><!-- card body -->
-							</div><!-- div collapsable -->
-						</div><!-- second card -->
+			<div class="tab"><!-- third card -->
+				<div class="card">
+					<div class="card-header">
+						<h5>
+							<i class="fas fa-envelope"></i>
+							&nbsp;Set alerts
+						</h5>
+					</div>
 
-						<div class="card" id="third"><!-- third card -->
-							<div class="card-header">
-								<button class="btn" type="button" data-toggle="collapse" data-target="#collapseEmail" aria-expanded="false" aria-controls="collapseEmail">
-								<h5>
-									<i class="fas fa-envelope"></i>
-									&nbsp;Set alerts
-								</h5>
-							</button>
-							</div>
+					<div class="card-body">
+						<div class="form-group">
+							<div class="input-group mb-3">
+								<div class="input-group-prepend">
+									<span class="input-group-text"><i class="fas fa-envelope"></i></span>
+								</div><!-- input-group-prepend -->
+								<input type="email" class="form-control pull-right" name="email" id="email" placeholder="Email">
+							</div><!-- input-group mb-3 -->
+						</div>
+						<div class="form-group">
+							<div class="input-group mb-3">
+								<div class="input-group-prepend">
+									<span class="input-group-text"><i class="fas fa-envelope"></i></span>
+								</div><!-- input-group-prepend -->
+								<input type="email" class="form-control pull-right" name="cc" id="cc" placeholder="Email2">
+							</div><!-- input-group mb-3 -->
+						</div>
+						<div class="form-group">
+							<div class="input-group mb-3">
+								<div class="input-group-prepend">
+									<span class="input-group-text"><i class="fas fa-envelope"></i></span>
+								</div><!-- input-group-prepend -->
+								<input type="email" class="form-control pull-right" name="cc2" id="cc2" placeholder="Email3">
+							</div><!-- input-group mb-3 -->
+						</div>
+						<div class="form-group">
+							<div class="input-group mb-3">
+								<div class="input-group-prepend">
+									<span class="input-group-text"><i class="fas fa-envelope"></i></span>
+								</div><!-- input-group-prepend -->
+								<input type="email" class="form-control pull-right" name="cc3" id="cc3" placeholder="Email4">
+							</div><!-- input-group mb-3 -->
+						</div>
+					</div><!-- card body -->
+				</div><!-- card -->
+			</div><!-- third tab -->
 
-							<div class="collapse width" id="collapseEmail">
-								<div class="card-body">
-									<div class="form-group">
-										<div class="input-group mb-3">
-											<div class="input-group-prepend">
-												<span class="input-group-text"><i class="fas fa-envelope"></i></span>
-											</div><!-- input-group-prepend -->
-									    <input type="email" class="form-control pull-right" name="email" id="email" placeholder="Email">
-									  </div><!-- input-group mb-3 -->
-								  </div>
-									<div class="form-group">
-										<div class="input-group mb-3">
-											<div class="input-group-prepend">
-												<span class="input-group-text"><i class="fas fa-envelope"></i></span>
-											</div><!-- input-group-prepend -->
-									    <input type="email" class="form-control pull-right" name="cc" id="cc" placeholder="Email2">
-										</div><!-- input-group mb-3 -->
-								  </div>
-									<div class="form-group">
-										<div class="input-group mb-3">
-											<div class="input-group-prepend">
-												<span class="input-group-text"><i class="fas fa-envelope"></i></span>
-											</div><!-- input-group-prepend -->
-									    <input type="email" class="form-control pull-right" name="cc2" id="cc2" placeholder="Email3">
-									  </div><!-- input-group mb-3 -->
-									</div>
-									<div class="form-group">
-										<div class="input-group mb-3">
-											<div class="input-group-prepend">
-												<span class="input-group-text"><i class="fas fa-envelope"></i></span>
-											</div><!-- input-group-prepend -->
-									    <input type="email" class="form-control pull-right" name="cc3" id="cc3" placeholder="Email4">
-										</div><!-- input-group mb-3 -->
-									</div>
-							  </div><!-- card body -->
-							</div><!-- div collapsable -->
-						</div><!-- third card -->
+			<div class="form-group" style="float:right;">
+				<button type="button" class="btn btn-warning" id="prevBtn" onclick="nextPrev(-1)">Previous</button>
+				<button type="button" class="btn btn-primary" id="nextBtn" onclick="nextPrev(1)">Next</button>
+			</div>
+			<!-- Circles which indicates the steps of the form: -->
+  		<div style="text-align:center;margin-top:40px;">
+    		<span class="step"></span>
+    		<span class="step"></span>
+    		<span class="step"></span>
+  		</div>
 
-			<!-- Pulsante submit -->
-			<button class="submit btn btn-primary btn-block" type="submit" name="submit" value="Submit">Submit</button>
-
+			<!-- Pulsante submit 
+			<button type="submit" class="submit btn btn-primary btn-block"  name="submit" value="Submit">Submit</button>
+			-->
 			</form>
-			</div><!-- container-fluid -->
+		</div><!-- container-fluid -->
 
 	</section>
 </div><!-- content-wrapper -->
 
-<!-- aggiunta campi dinamici -->
+<!-- main navigation -->
 <script>
-	// nascondi div al caricamento iniziale
-	$("#second, #third").hide();
-
-	$(document).ready(function(){
-		const maxField = 10; //Input fields increment limitation
-		const addButton = $('.add'); //Add button selector
-		const wrapper = $('.field_wrapper'); //Input field wrapper
-		let fieldHTML = '<div><input type="text" name="vault_node[]" class="vault_node" placeholder="Vault URL" class="form-control pull-right"><button type="button" class="btn btn-light" id="remove"><i class="fas fa-minus"></i></button></div>'; //New input field html 
-		let x = 1; //Initial field counter is 1
+	let currentTab = 0; // Current tab is set to be the first tab (0)
+	showTab(currentTab); // Display the current tab
+	
+	function showTab(n) {
+		// This function will display the specified tab of the form...
+		let x = document.getElementsByClassName("tab");
+		x[n].style.display = "block";
+		//... and fix the Previous/Next buttons:
+		if (n == 0) {
+			document.getElementById("prevBtn").style.display = "none";
+		} else {
+			document.getElementById("prevBtn").style.display = "inline";
+		}
+		if (n == (x.length - 1)) {
+			document.getElementById("nextBtn").innerHTML = "Submit";
+		} else {
+			document.getElementById("nextBtn").innerHTML = "Next";
+		}
+		//... and run a function that will display the correct step indicator:
+		fixStepIndicator(n)
+	}
 		
-		//Once add button is clicked
-		$(addButton).click(function(){
-			//Check maximum number of input fields
-			if(x < maxField){ 
-				x++; //Increment field counter
-				$(wrapper).append(fieldHTML); //Add field html
-				// pass dynamic created fields to validation
-				$("input[name^='vault_node']").rules("add", {
+	function nextPrev(n) {
+		// This function will figure out which tab to display
+		let x = document.getElementsByClassName("tab");
+		// Exit the function if any field in the current tab is invalid:
+		if (n == 1 && !validateForm()) return false;
+		// Hide the current tab:
+		x[currentTab].style.display = "none";
+		// Increase or decrease the current tab by 1:
+		currentTab = currentTab + n;
+		// if you have reached the end of the form...
+		if (currentTab >= x.length) {
+			// ... the form gets submitted:
+			//document.getElementById("Form").submit();
+			return false;
+		}
+		// Otherwise, display the correct tab:
+		showTab(currentTab);
+	}
+
+	function validateForm() {
+		let form = $("#Form");
+		let valid = true;
+
+		// add method for receiver email address
+		$.validator.addMethod("check_email", function(value, element) { 
+			let filter = /^([a-zA-Z0-9_.+-])+\@(([a-zA-Z0-9-])+\.)+([a-zA-Z0-9]{2,4})+$/;
+				return filter.test(value) && value != "";
+			}, "Invalid email address"
+		);
+	
+		// validate form
+		form.validate({
+			validClass: "font-weight-bold alert-success",
+			errorClass: "font-weight-bold alert-danger",
+			rules: {
+				vault_node: {
 					required: true,
 					url: true
-				});
+				},
+				threshold: {
+					required: true,
+					digits: true,
+					range: [1, 999999]
+				},
+				email: {
+				required: true,
+				check_email: true
+				},
+				cc: {
+				check_email: true
+				},
+				cc2: {
+				check_email: true
+				},
+				cc3: {
+				check_email: true
+				},
+			},
+	
+			// change css class to error
+			highlight: function (element, errorClass, validClass) {
+				$(element).addClass(errorClass).removeClass("font-weight-bold alert-success");
+			},
+	
+			// change css class to success
+			unhighlight: function (element, errorClass, validClass) {
+				$(element).removeClass(errorClass).addClass("font-weight-bold alert-success");
 			}
+	
 		});
-		
-		//Once remove button is clicked
-		$(wrapper).on('click', '#remove', function(e){
-			e.preventDefault();
-			$(this).parent('div').remove(); //Remove field html
-			x--; //Decrement field counter
-		});
-	});
+		if (form.valid() == true) {
+			document.getElementsByClassName("step")[currentTab].className += " finish";
+			return valid; // return the valid status
+		} 
+	}
+
+	function fixStepIndicator(n) {
+		// This function removes the "active" class of all steps...
+		let i, x = document.getElementsByClassName("step");
+		for (i = 0; i < x.length; i++) {
+			x[i].className = x[i].className.replace(" active", "");
+		}
+		//... and adds the "active" class on the current step:
+		x[n].className += " active";
+	}
+
 </script>
 
-<!-- validazione campi -->
+<!-- aggiunta campi dinamici -->
 <script>
-$().ready(function() {
-  // default action when all fields are valid
-  $.validator.setDefaults({
-	submitHandler: function() {
-    //pass
-	}
-  });
-
-  // add method for receiver email address
-  $.validator.addMethod("check_email", function(value, element) { 
-  let filter = /^([a-zA-Z0-9_.+-])+\@(([a-zA-Z0-9-])+\.)+([a-zA-Z0-9]{2,4})+$/;
-  	return filter.test(value) && value != "";
-  }, "Invalid email address"
-  );
-
-	// validate signup form on keyup and submit
-	$("#Form").validate({
-		validClass: "font-weight-bold alert-success",
-		errorClass: "font-weight-bold alert-danger",
-		rules: {
-			threshold: {
+	const maxField = 10; //Input fields increment limitation
+	const addButton = $('.add'); //Add button selector
+	const wrapper = $('.col-sm-11'); //Input field wrapper
+	let fieldHTML = '<div><input type="text" name="vault_node[]" placeholder="Vault URL" class="form-control pull-right"><button type="button" class="btn btn-light" id="remove"><i class="fas fa-minus"></i></button></div>'; //New input field html 
+	let x = 1; //Initial field counter is 1
+	
+	//Once add button is clicked
+	$(addButton).click(function(){
+		//Check maximum number of input fields
+		if(x < maxField){ 
+			x++; //Increment field counter
+			$(wrapper).append(fieldHTML); //Add field html
+			// pass dynamic created fields to validation
+			$("input[name^='vault_node']").rules("add", {
 				required: true,
-				digits: true,
-				range: [1, 999999]
-			},
-			email: {
-			required: true,
-			check_email: true
-			},
-			cc: {
-			required: true,
-			check_email: true
-			},
-			cc2: {
-			required: true,
-			check_email: true
-			},
-			cc3: {
-			required: true,
-			check_email: true
-			},
-		},
-
-		// change css class to error
-		highlight: function (element, errorClass, validClass) {
-			$(element).addClass(errorClass).removeClass("font-weight-bold alert-success");
-		},
-
-		// change css class to success
-		unhighlight: function (element, errorClass, validClass) {
-			$(element).removeClass(errorClass).addClass("font-weight-bold alert-success");
+				url: true
+			});
 		}
-
 	});
-
-});
+	
+	//Once remove button is clicked
+	$(wrapper).on('click', '#remove', function(e){
+		e.preventDefault();
+		$(this).parent('div').remove(); //Remove field html
+		x--; //Decrement field counter
+	});
 </script>
 {% endblock %}
