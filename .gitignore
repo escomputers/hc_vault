@@ -1,5 +1,6 @@
 .DS_Store
 vault_data.txt
+*.bkp
 
 # Byte-compiled / optimized / DLL files
 __pycache__/

@@ -6,5 +6,5 @@ from . import views
 
 urlpatterns = [
     path("", views.home, name="dashboard"),
-    path("settings/", views.settings, name="settings")
+    path("add_cluster/", views.add_cluster, name="add_cluster")
 ]
