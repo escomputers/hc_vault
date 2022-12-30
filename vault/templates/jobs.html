@@ -1,0 +1,180 @@
+{% extends "index.html" %}
+
+{% block content %}
+<div class="content-wrapper">
+<!-- Content Header (Page header) -->
+  <section class="content-header">
+    <div class="container-fluid">
+      <div class="row mb-2">
+        <div class="col-sm-6">
+  		  <h3 class="text-bold text-dark">Alert jobs</h3>
+		</div>
+      </div>
+    </div>
+  </section>
+
+	<!-- Main content -->
+	<section class="content">
+		<div class="container-fluid">
+
+			<div class="card"><!-- List Jobs-->
+				<div class="card-header">
+					<h5>
+						<i class="fas fa-hammer"></i>
+						&nbsp;Scheduled jobs
+					</h5>
+				</div>
+
+				<div class="card-body">
+					<table id="jobs" class="table table-bordered table-hover">
+						<thead>
+							<tr>
+							<th>Cluster</th>
+							<th>Threshold</th>
+							<th>Emails</th>
+							<th></th>
+							</tr>
+						</thead>
+
+						<tbody>
+							<tr>
+							<td>MoncalieriTest</td>
+							<td>150</td>
+							<td>user@company.com</td>
+							
+							<td><span class="badge bg-danger"><font size="3.1em">Rimuovi</font></span></td>
+							</tr>
+						</tbody>
+					</table>
+				</div><!-- card body -->
+			</div><!-- card -->
+
+			<div class="card">
+				<div class="card-header">
+					<h5>
+						<i class="fas fa-envelope"></i>
+						&nbsp;Add alert job
+					</h5>
+				</div>
+
+				<form id="Form" action="" method="post">
+				{% csrf_token %}
+
+					<div class="card"><!-- first card -->
+						<div class="card-header">
+							<h5>
+								<i class="fas fa-server"></i>
+								&nbsp;Select cluster
+							</h5>
+						</div>
+
+						<div class="card-body">
+							<div class="row">
+								<div class="col-sm-7">
+									<select class="custom-select">
+										<option selected>Select cluster</option>
+										<option value="1">MoncalieriTest</option>
+										<option value="2">ParmaTest</option>
+										<option value="3">TorinoTest</option>
+										<option value="1">MoncalieriProd</option>
+										<option value="2">ParmaProd</option>
+										<option value="3">TorinoProd</option>
+										<option value="1">MoncalieriDev</option>
+										<option value="2">ParmaDev</option>
+										<option value="3">TorinoDev</option>
+									</select>
+
+								</div><!-- col-sm-7 -->
+							</div><!-- row -->
+						</div><!-- card-body -->
+					</div><!-- card -->
+
+					<div class="card"><!-- second card -->
+							<div class="card-header">
+								<h5>
+									<i class="fas fa-bell"></i>
+									&nbsp;Set threshold
+								</h5>
+							</div>
+
+							<div class="card-body">
+								<div class="col-sm-6">
+									<div class="input-group mb-3">
+										<div class="input-group-prepend">
+											<span class="input-group-text"><i class="fas fa-id-card"></i></span>
+										</div><!-- input-group-prepend -->
+										<input type="text" name="threshold" id="threshold" placeholder="License threshold" class="form-control pull-right">
+									</div><!-- input-group mb-3 -->
+								</div><!-- col-sm -->
+							</div><!-- card body -->
+					</div><!-- card -->
+
+					<div class="card"><!-- third card -->
+						<div class="card-header">
+							<h5>
+								<i class="fas fa-envelope"></i>
+								&nbsp;Add emails
+							</h5>
+						</div>
+
+						<div class="card-body">
+							<div class="form-group">
+								<div class="input-group mb-3">
+									<div class="input-group-prepend">
+										<span class="input-group-text"><i class="fas fa-envelope"></i></span>
+									</div><!-- input-group-prepend -->
+									<input type="email" class="form-control pull-right" name="email" id="email" placeholder="Email">
+								</div><!-- input-group mb-3 -->
+							</div>
+							<div class="form-group">
+								<div class="input-group mb-3">
+									<div class="input-group-prepend">
+										<span class="input-group-text"><i class="fas fa-envelope"></i></span>
+									</div><!-- input-group-prepend -->
+									<input type="email" class="form-control pull-right" name="cc" id="cc" placeholder="Email2">
+								</div><!-- input-group mb-3 -->
+							</div>
+							<div class="form-group">
+								<div class="input-group mb-3">
+									<div class="input-group-prepend">
+										<span class="input-group-text"><i class="fas fa-envelope"></i></span>
+									</div><!-- input-group-prepend -->
+									<input type="email" class="form-control pull-right" name="cc2" id="cc2" placeholder="Email3">
+								</div><!-- input-group mb-3 -->
+							</div>
+							<div class="form-group">
+								<div class="input-group mb-3">
+									<div class="input-group-prepend">
+										<span class="input-group-text"><i class="fas fa-envelope"></i></span>
+									</div><!-- input-group-prepend -->
+									<input type="email" class="form-control pull-right" name="cc3" id="cc3" placeholder="Email4">
+								</div><!-- input-group mb-3 -->
+							</div>
+						</div><!-- card body -->
+					</div><!-- card -->
+
+				<!-- Pulsante submit -->
+				<button type="submit" class="submit btn btn-primary btn-block"  name="submit" value="Submit">Submit</button>
+
+				</form>
+			</div><!-- card-group -->
+		</div><!-- container-fluid -->
+
+	</section>
+</div><!-- content-wrapper -->
+
+<!-- datatable -->
+<script>
+	$(function () {
+		$('#jobs').DataTable({
+			"paging": true,
+			"lengthChange": false,
+			"searching": false,
+			"order": [[ 2, "desc" ]],
+			"info": true,
+			"autoWidth": false,
+			"responsive": true,
+		});
+	});
+	</script>
+{% endblock %}

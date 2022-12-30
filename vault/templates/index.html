@@ -31,12 +31,16 @@
 	<script src="{% static 'plugins/fontawesome/js/all.min.js' %}"></script>
     <link rel="stylesheet" href="{% static 'plugins/fontawesome/css/all.min.css' %}">
 
-   <!-- Jquery validation -->
-   <script src="{% static 'plugins/jquery-validation/jquery.validate.min.js' %}"></script>
-   <script src="{% static 'plugins/jquery-validation/additional-methods.min.js' %}"></script>
-
-   <!-- Icheck bootstrap -->
-   <link rel="stylesheet" href="{% static 'plugins/icheck-bootstrap/css/icheck-bootstrap.min.css' %}">
+    <!-- Datatables -->
+    <script src="{% static 'plugins/datatables/js/jquery.dataTables.min.js' %}"></script>
+	<script src="{% static 'plugins/datatables/js/dataTables.bootstrap4.min.js' %}"></script>
+	<script src="{% static 'plugins/datatables/js/dataTables.responsive.min.js' %}"></script>
+	<script src="{% static 'plugins/datatables/js/responsive.bootstrap4.min.js' %}"></script>
+	<script src="{% static 'plugins/datatables/js/dataTables.fixedHeader.min.js' %}"></script>
+	<script src="{% static 'plugins/datatables/js/dataTables.fixedColumns.min.js' %}"></script>
+    <link rel="stylesheet" href="{% static 'plugins/datatables/css/dataTables.bootstrap4.min.css' %}" >
+	<link rel="stylesheet" href="{% static 'plugins/datatables/css/responsive.bootstrap4.min.css' %}" >
+	<link rel="stylesheet" href="{% static 'plugins/datatables/css/fixedColumns.bootstrap4.min.css' %}" >
 </head>
 
 <body class="hold-transition sidebar-mini layout-fixed">
@@ -86,10 +90,17 @@
         </li>
 
         <li class="nav-item">
-        <a href="{% url 'add_cluster' %}" class="nav-link">
+        <a href="{% url 'clusters' %}" class="nav-link">
             <i class="fas fa-server nav-icon"></i>
-            <p>Add Cluster</p>
+            <p>Clusters</p>
         </a>
+        </li>
+
+        <li class="nav-item">
+            <a href="{% url 'jobs' %}" class="nav-link">
+                <i class="fas fa-envelope nav-icon"></i>
+                <p>Alert jobs</p>
+            </a>
         </li>
 
       </ul>
