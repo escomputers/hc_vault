@@ -7,8 +7,8 @@
     <div class="container-fluid">
       <div class="row mb-2">
         <div class="col-sm-6">
-  		  <h3 class="text-bold text-dark">Settings</h3>
-		</div>
+  		  	<h3 class="text-bold text-dark">Settings</h3>
+				</div>
       </div>
     </div>
   </section>
@@ -26,95 +26,95 @@
 				</div>
 
 				<div class="card-body">
-					<table id="clusters" class="table table-bordered table-hover">
+					<table id="clusters" class="table table-borderless table-hover">
 						<thead>
 							<tr>
-							<th>Cluster</th>
-							<th>Nodi</th>
 							<th></th>
+							<th class="none" id="nodes">Nodes</th>
+							<th>
+							</th>
 							</tr>
 						</thead>
 
+						{% if clusters %}
+							{% for i in clusters %}
 						<tbody>
 							<tr>
-								<td>MoncalieriTest</td>
-								<td>https://vault01.company.com, https://vault02.company.com</td>
+								<td>{{ i.cluster_name }}</td>
+								<td>{{ i.node1 }}</td>
 								<td><span class="badge bg-danger"><font size="3.1em">Remove</font></span>
 								</td>
 							</tr>
-							<tr>
-								<td>ParmaProd</td>
-								<td>https://vault04.company.com, https://vault05.company.com</td>
-								<td><span class="badge bg-danger"><font size="3.1em">Remove</font></span>
-								</td>
-							</tr>
-							<tr>
-								<td>TorinoTest</td>
-								<td>https://vault06.company.com, https://vault07.company.com</td>
-								<td><span class="badge bg-danger"><font size="3.1em">Remove</font></span>
-								</td>
-							</tr>
+							{% endfor %}
+						{% endif %}	
 						</tbody>
+
 					</table>
 				</div><!-- card body -->
-		</div><!-- card -->
+		  </div><!-- card -->
 
-			<form id="Form" action="" method="post">
-			{% csrf_token %}
-
-				<div class="card"><!-- second card -->
-					<div class="card-header">
-						<h5>
-							<i class="fas fa-server"></i>
-							&nbsp;Add cluster
-						</h5>
-					</div>
-
-					<div class="card-body">
-						<div class="row">
-							<div class="col-sm-5">
-								<div class="input-group mb-3">
-									<div class="input-group-prepend">
-										<span class="input-group-text"><i class="fas fa-id-badge"></i></span>
-									</div>
-								<input type="text" name="cluster_name" class="form-control" placeholder="Cluster name">
-								<!-- Add URLs button -->
-								<div class="input-group-append">
-									<button type="button" class="btn add btn-primary" id="addRow"><i class="fas fa-plus"></i>
-										Add node
-									</button>
-								</div>
-								</div>
-							</div>
+		  <div class="card"><!-- second card -->
+				<form id="Form" action="" method="post">
+					{% csrf_token %}
+						<div class="card-header">
+							<h5>
+								<i class="fas fa-server"></i>
+								&nbsp;Add cluster
+							</h5>
 						</div>
 
-						<div class="row">
-							<div class="col-sm-8">
-								<div id="inputFormRow">
+						<div class="card-body">
+							<div class="row">
+								<div class="col-sm-5">
 									<div class="input-group mb-3">
 										<div class="input-group-prepend">
-											<span class="input-group-text"><i class="fas fa-globe"></i></span>
+											<span class="input-group-text"><i class="fas fa-id-badge"></i></span>
 										</div>
-									  <input type="text" name="vault_node[]" class="form-control m-input" placeholder="Vault URL" autocomplete="off">
-										<div class="input-group-append">
-										  <button id="removeRow" type="button" class="btn btn-danger">Remove</button>
-										</div>
-									</div><!-- input-group mb-3 -->
-							  </div><!-- inputFormRow -->
-	
-							  <div id="newRow"></div>
+									<input type="text" name="cluster_name" class="form-control" placeholder="Cluster name" required>
+									<!-- Add URLs button -->
+									<div class="input-group-append">
+										<button type="button" class="btn add btn-primary" id="addRow"><i class="fas fa-plus"></i>
+											Add node
+										</button>
+									</div>
+									</div>
+								</div>
+							</div>
 
-							</div><!-- col-sm-7 -->
-						</div><!-- row -->
+							<div class="row">
+								<div class="col-sm-8">
+									<div id="inputFormRow">
+										<div class="input-group mb-3">
+											<div class="input-group-prepend">
+												<span class="input-group-text"><i class="fas fa-globe"></i></span>
+											</div>
+											<input type="text" name="node1" class="form-control m-input" placeholder="Vault URL" autocomplete="off" required>
+											<div class="input-group-append">
+												<button id="removeRow" type="button" class="btn btn-danger">Remove</button>
+											</div>
+										</div><!-- input-group mb-3 -->
+									</div><!-- inputFormRow -->
+		
+									<div id="newRow"></div>
 
-					</div><!-- card-body -->
-				</div><!-- card -->
+								</div><!-- col-sm-7 -->
+							</div><!-- row -->
+						</div><!-- card-body -->
 
-			<!-- Pulsante submit -->
-			<button type="submit" class="submit btn btn-primary btn-block"  name="submit" value="Submit">Submit</button>
+				<!-- info -->
+				<div class="alert alert-warning alert-dismissible fade show" role="alert">
+					<i class='fa fa-lightbulb'></i>
+					<strong>Info:</strong> max <b>50</b> nodes per cluster
+					<button type="button" class="close" data-dismiss="alert" aria-label="Close">
+						<span aria-hidden="true">&times;</span>
+					</button>
+				</div>
 
-			</form>
-		</div><!-- container-fluid -->
+				<!-- Pulsante submit -->
+				<button type="submit" class="submit btn btn-primary btn-block"  name="submit" value="Submit">Save</button>
+				</form>
+		  </div><!-- card -->
+	  </div><!-- container-fluid -->
 
 	</section>
 </div><!-- content-wrapper -->
@@ -123,12 +123,8 @@
 <script>
 $(function () {
 	$('#clusters').DataTable({
-		"paging": true,
-		"lengthChange": false,
+		"ordering": false,
 		"searching": false,
-		"order": [[ 2, "desc" ]],
-		"info": true,
-		"autoWidth": false,
 		"responsive": true,
 	});
 });
@@ -142,7 +138,7 @@ $(function () {
 		html += '<div id="inputFormRow">';
 		html += '<div class="input-group mb-3">';
 		html += '<div class="input-group-prepend"><span class="input-group-text"><i class="fas fa-globe"></i></span></div>';
-		html += '<input type="text" name="vault_node[]" class="form-control m-input" placeholder="Vault URL" autocomplete="off">';
+		html += '<input type="text" name="node[]" class="form-control m-input" placeholder="Vault URL" autocomplete="off" required>';
 		html += '<div class="input-group-append">';
 		html += '<button id="removeRow" type="button" class="btn btn-danger">Remove</button>';
 		html += '</div>';

@@ -7,8 +7,8 @@
     <div class="container-fluid">
       <div class="row mb-2">
         <div class="col-sm-6">
-  		  <h3 class="text-bold text-dark">Alert jobs</h3>
-		</div>
+  		  	<h3 class="text-bold text-dark">Alert jobs</h3>
+				</div>
       </div>
     </div>
   </section>
@@ -167,12 +167,8 @@
 <script>
 	$(function () {
 		$('#jobs').DataTable({
-			"paging": true,
-			"lengthChange": false,
 			"searching": false,
-			"order": [[ 2, "desc" ]],
-			"info": true,
-			"autoWidth": false,
+			"ordering": false,
 			"responsive": true,
 		});
 	});
