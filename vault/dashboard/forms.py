@@ -1,5 +1,6 @@
 from django import forms
-from .models import Cluster, ClusterNodes, Job
+from django.forms import ModelForm
+from .models import Cluster, Job
 
 class ClusterForm(ModelForm):
 	class Meta:
