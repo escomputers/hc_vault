@@ -60,8 +60,28 @@
 		  </div><!-- card -->
 
 		  <div class="card"><!-- second card -->
+
 				<form id="Form" action="" method="post">
 					{% csrf_token %}
+
+					<!-- sezione per errori/messaggi successo del form -->
+					{% if error %}
+					<div class="alert alert-danger alert-dismissible fade show" role="alert"> 
+						<strong>{{ error }}</strong>
+						<button type="button" class="close" data-dismiss="alert" aria-label="Close">
+							<span aria-hidden="true">&times;</span>
+						</button>
+					</div>
+					{% endif %}
+					{% if success %}
+					<div class="alert alert-success alert-dismissible fade show" role="alert"> 
+						<strong>{{ success }}</strong>
+						<button type="button" class="close" data-dismiss="alert" aria-label="Close">
+							<span aria-hidden="true">&times;</span>
+						</button>
+					</div>
+					{% endif %}
+
 						<div class="card-header">
 							<h5>
 								<i class="fas fa-server"></i>
