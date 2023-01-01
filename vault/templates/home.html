@@ -1,151 +1,151 @@
 {% extends "index.html" %}
 
 {% block content %}
-<!-- Main content -->
 <div class="content-wrapper">
-    <!-- Content Header (Page header) -->
-    <section class="content-header">
-      <div class="container-fluid">
+<!-- Content Header (Page header) -->
+  <section class="content-header">
+    <div class="container-fluid">
+      <div class="row mb-2">
+        <div class="col-sm-6">
+				</div>
       </div>
-    </section>
-   
- <section class="content">
-   <div class="container-fluid">
-     <div class="row">
-       <div class="col-md-12">
-         <div class="card">
-           <div class="card-header">
-             <h5 class="card-title">Last Report</h5>
+    </div>
+  </section>
+
+	<!-- Main content -->
+	<section class="content">
+		<div class="container-fluid">
+
+			<div class="card"><!-- Last report -->
+				<div class="card-header">
+					<h5>
+						<i class="fas fa-chart-simple"></i>
+						&nbsp;Last report
+					</h5>
+          <small class="text-muted">last update at 2023-01-01 02:26:35</small>
+				</div>
+
+				<div class="card-body">
+					<table id="report" class="table table-borderless table-hover">
+						<thead>
+							<tr>
+                <th>Cluster</th>
+                <th>Used</th>
+                <th>Available</th>
+                <th>Status</th>
+							</tr>
+						</thead>
+
+						{% if clusters %}
+							{% for i in clusters %}
+						<tbody>
+							<tr>
+								<td>{{ i.cluster_name }}</td>
+								<td>{{ i.entities_count }}</td>
+                <td>{{ i.threshold }}</td>
+								<td><span class="badge badge-success">Normal</span></span>
+								</td>
+							</tr>
+              {% endfor %}
+              {% endif %}	
+						</tbody>
+
+					</table>
+				</div><!-- card body -->
+		  </div><!-- card -->
+
+		  <div class="card"><!-- second card -->
+        <div class="card-header">
+          <h5>
+            <i class="fas fa-circle-dot"></i>
+            &nbsp;Recap
+          </h5>
         </div>
-        <!-- /.card-header -->
+
         <div class="card-body">
           <div class="row">
-            <div class="col-md-8">
-                <div class="card">
-                    <div class="card-body p-0">
-                      <div class="table-responsive">
-                        <table class="table m-0">
-                          <thead>
-                          <tr>
-                            <th>Team/Operator</th>
-                            <th>Used</th>
-                            <th>Available</th>
-                            <th>Status</th>
-                          </tr>
-                          </thead>
-                          <tbody>
-                          <tr>
-                            <td>UAT</td>
-                            <td>19</td>
-                            <td>50</td>
-                            <td><span class="badge badge-success">Normal</span></td>
-                          </tr>
-                          <tr>
-                            <td>EUAT</td>
-                            <td>11</td>
-                            <td>10</td>
-                            <td><span class="badge badge-danger">Exceeded</span></td>
-                          </tr>
-                          <tr>
-                            <td>INFOSEC</td>
-                            <td>11</td>
-                            <td>15</td>
-                            <td><span class="badge badge-warning">Warning</span></td>
-                          </tr>
-                          </tbody>
-                        </table>
-                      </div>
-                      <!-- /.table-responsive -->
-                    </div>
-                    <!-- /.card-body -->
+
+            <div class="col-sm-8">
+              <div class="progress-group">
+                <span class="progress-text">Parma-Prod</span>
+                <span class="float-right"><b>11/15</b></span>
+                <div class="progress progress-sm">
+                  <div class="progress-bar bg-success" style="width: 80%">
                   </div>
-                  <!-- /.card -->
-            </div>
+                </div>
+              </div>
+              <div class="progress-group">
+                <span class="progress-text">Torino-Systest</span>
+                <span class="float-right"><b>50/50</b></span>
+                <div class="progress progress-sm">
+                  <div class="progress-bar bg-danger" style="width: 100%">
+                  </div>
+                </div>
+              </div>
+              <div class="progress-group">
+                <span class="progress-text">Moncalieri-Dev</span>
+                <span class="float-right"><b>35/50</b></span>
+                <div class="progress progress-sm">
+                  <div class="progress-bar bg-warning" style="width: 60%">
+                  </div>
+                </div>
+              </div><!-- /.progress-group -->
 
-                <!-- /.col -->
-                <div class="col-md-4">
-                <p class="text-center">
-                    <strong>Recap</strong>
-                </p>
+            </div><!-- col-sm-8 -->
+          </div><!-- row -->
+        </div><!-- card-body -->
+		  </div><!-- card -->
+	  </div><!-- container-fluid -->
 
-                <div class="progress-group">
-                  UAT
-                    <span class="float-right"><b>19</b>/50</span>
-                    <div class="progress progress-sm">
-                    <div class="progress-bar bg-success" style="width: 80%"></div>
-                    </div>
-                </div>
-                <!-- /.progress-group -->
+	</section>
+</div><!-- content-wrapper -->
 
-                <div class="progress-group">
-                    EUAT
-                    <span class="float-right"><b>11</b>/10</span>
-                    <div class="progress progress-sm">
-                    <div class="progress-bar bg-danger" style="width: 100%"></div>
-                    </div>
-                </div>
+<!-- datatable -->
+<script>
+$(function () {
+	$('#report').DataTable({
+		"ordering": false,
+		"searching": false,
+		"responsive": true,
+	});
+});
+</script>
 
-                <!-- /.progress-group -->
-                <div class="progress-group">
-                    <span class="progress-text">INFOSEC</span>
-                    <span class="float-right"><b>11</b>/15</span>
-                    <div class="progress progress-sm">
-                    <div class="progress-bar bg-warning" style="width: 60%"></div>
-                    </div>
-                </div>
-
-                </div>
-                <!-- /.col -->
-            </div>
-            <!-- /.row -->
-            </div>
-            <!-- ./card-body -->
-
-            <!--TABELLA CON PERCENTUALI-->
-            <!--
-            <div class="card-footer">
-            <div class="row">
-                <div class="col-sm-3 col-6">
-                <div class="description-block border-right">
-                    <span class="description-percentage text-success"><i class="fas fa-caret-up"></i> 17%</span>
-                    <h5 class="description-header">$35,210.43</h5>
-                    <span class="description-text">TOTAL REVENUE</span>
-                </div>
-                </div>
-
-                <div class="col-sm-3 col-6">
-                <div class="description-block border-right">
-                    <span class="description-percentage text-warning"><i class="fas fa-caret-left"></i> 0%</span>
-                    <h5 class="description-header">$10,390.90</h5>
-                    <span class="description-text">TOTAL COST</span>
-                </div>
-                </div>
-                <div class="col-sm-3 col-6">
-                <div class="description-block border-right">
-                    <span class="description-percentage text-success"><i class="fas fa-caret-up"></i> 20%</span>
-                    <h5 class="description-header">$24,813.53</h5>
-                    <span class="description-text">TOTAL PROFIT</span>
-                </div>
-                </div>
-                <div class="col-sm-3 col-6">
-                <div class="description-block">
-                    <span class="description-percentage text-danger"><i class="fas fa-caret-down"></i> 18%</span>
-                    <h5 class="description-header">1200</h5>
-                    <span class="description-text">GOAL COMPLETIONS</span>
-                </div>
-                </div>
-            </div>
-            </div>
-            -->
-            <!-- /.TABELLA CON PERCENTUALI-->
-
-        </div>
-        <!-- /.card -->
-        </div>
-        <!-- /.col -->
+<!--TABELLA CON PERCENTUALI-->
+<!--
+<div class="card-footer">
+<div class="row">
+    <div class="col-sm-3 col-6">
+    <div class="description-block border-right">
+        <span class="description-percentage text-success"><i class="fas fa-caret-up"></i> 17%</span>
+        <h5 class="description-header">$35,210.43</h5>
+        <span class="description-text">TOTAL REVENUE</span>
     </div>
-    <!-- /.row -->
-    </section>
     </div>
-  </div>
+
+    <div class="col-sm-3 col-6">
+    <div class="description-block border-right">
+        <span class="description-percentage text-warning"><i class="fas fa-caret-left"></i> 0%</span>
+        <h5 class="description-header">$10,390.90</h5>
+        <span class="description-text">TOTAL COST</span>
+    </div>
+    </div>
+    <div class="col-sm-3 col-6">
+    <div class="description-block border-right">
+        <span class="description-percentage text-success"><i class="fas fa-caret-up"></i> 20%</span>
+        <h5 class="description-header">$24,813.53</h5>
+        <span class="description-text">TOTAL PROFIT</span>
+    </div>
+    </div>
+    <div class="col-sm-3 col-6">
+    <div class="description-block">
+        <span class="description-percentage text-danger"><i class="fas fa-caret-down"></i> 18%</span>
+        <h5 class="description-header">1200</h5>
+        <span class="description-text">GOAL COMPLETIONS</span>
+    </div>
+    </div>
+</div>
+</div>
+-->
+<!-- /.TABELLA CON PERCENTUALI-->
 {% endblock %}

@@ -7,6 +7,7 @@ class Cluster(models.Model):
     cluster_name = models.CharField(max_length=64, blank=True, null=True, unique=True)
     entities_count = models.IntegerField(blank=True, null=True)
     entities_metadata = models.CharField(max_length=256, blank=True, null=True)
+    threshold = models.IntegerField(validators=[MinValueValidator(1), MaxValueValidator(999999)], blank=True, null=True)
     node1 = models.URLField(max_length = 256, blank=True, null=True)
     node2 = models.URLField(max_length = 256, blank=True, null=True)
     node3 = models.URLField(max_length = 256, blank=True, null=True)
@@ -63,7 +64,6 @@ class Cluster(models.Model):
 
 
 class Job(models.Model):
-    threshold = models.IntegerField(validators=[MinValueValidator(1), MaxValueValidator(999999)], blank=True, null=True)
     email = models.EmailField(blank=True, null=True, unique=True)
     cc = models.EmailField(blank=True, null=True, unique=True)
     cc2 = models.EmailField(blank=True, null=True, unique=True)
