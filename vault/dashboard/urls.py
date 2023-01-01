@@ -7,5 +7,5 @@ from . import views
 urlpatterns = [
     path("", views.home, name="dashboard"),
     path("clusters/", views.clusters, name="clusters"),
-    path("jobs/", views.jobs, name="jobs")
+    path("alerts/", views.alerts, name="alerts")
 ]

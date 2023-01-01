@@ -7,7 +7,13 @@
     <div class="container-fluid">
       <div class="row mb-2">
         <div class="col-sm-6">
-  		  	<h3 class="text-bold text-dark">Settings</h3>
+  		  	<nav aria-label="breadcrumb">
+						<ol class="breadcrumb">
+							<li class="breadcrumb-item"><a href="{% url 'dashboard' %}">Home</a></li>
+							<li class="breadcrumb-item"><a href="#">Settings</a></li>
+							<li class="breadcrumb-item active" aria-current="page">Clusters</li>
+						</ol>
+					</nav>
 				</div>
       </div>
     </div>
