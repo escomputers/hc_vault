@@ -25,5 +25,5 @@ def clusters(request):
     return render(request, 'clusters.html', context={'form': ClusterForm(), 'clusters': clusters})
 
 
-def jobs(request):
-    return render(request, 'jobs.html')
+def alerts(request):
+    return render(request, 'alerts.html')
