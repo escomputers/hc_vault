@@ -36,20 +36,24 @@
 						<thead>
 							<tr>
 							<th></th>
-							<th class="none" id="nodes">Nodes</th>
-							<th></th>
+							<th class="none">Nodes:</th>
+							<th class="none"></th>
+							<!--<th></th> for remove button-->
 							</tr>
 						</thead>
 
-						{% if clusters %}
-							{% for i in clusters %}
 						<tbody>
+							{% if clusters %}
+							{% for i in clusters %}
 							<tr>
 								<td>{{ i.cluster_name }}</td>
 								<td>{{ i.node1 }}</td>
+								<td>{{ i.node2 }}</td>
+								<!--
 								<td>
 									<span class="badge bg-danger"><font size="3.1em">Remove</font></span>
 								</td>
+								-->
 							</tr>
 							{% endfor %}
 						{% endif %}	
@@ -67,7 +71,7 @@
 					<!-- sezione per errori/messaggi successo del form -->
 					{% if error %}
 					<div class="alert alert-danger alert-dismissible fade show" role="alert"> 
-						<strong>{{ error }}</strong>
+						<i class="fas fa-circle-exclamation"></i><strong>&nbsp;{{ error }}</strong>
 						<button type="button" class="close" data-dismiss="alert" aria-label="Close">
 							<span aria-hidden="true">&times;</span>
 						</button>
@@ -75,7 +79,7 @@
 					{% endif %}
 					{% if success %}
 					<div class="alert alert-success alert-dismissible fade show" role="alert"> 
-						<strong>{{ success }}</strong>
+						<i class="fas fa-circle-check"></i><strong>&nbsp;{{ success }}</strong>
 						<button type="button" class="close" data-dismiss="alert" aria-label="Close">
 							<span aria-hidden="true">&times;</span>
 						</button>
@@ -114,7 +118,7 @@
 											<div class="input-group-prepend">
 												<span class="input-group-text"><i class="fas fa-globe"></i></span>
 											</div>
-											<input type="text" name="node1" class="form-control m-input" placeholder="Vault URL" autocomplete="off" required>
+											<input type="text" name="node1" class="form-control m-input" placeholder="Vault URL" required>
 											<div class="input-group-append">
 												<button id="removeRow" type="button" class="btn btn-danger">Remove</button>
 											</div>
@@ -158,23 +162,31 @@ $(function () {
 
 <!-- aggiunta campi dinamici -->
 <script>
+	const maxField = 10; //Input fields increment limitation
+	let x = 1; //Initial field counter is 1
+
 	// add row
 	$("#addRow").click(function () {
+		x++; //Increment field counter
+
 		let html = '';
 		html += '<div id="inputFormRow">';
 		html += '<div class="input-group mb-3">';
 		html += '<div class="input-group-prepend"><span class="input-group-text"><i class="fas fa-globe"></i></span></div>';
-		html += '<input type="text" name="node[]" class="form-control m-input" placeholder="Vault URL" autocomplete="off" required>';
+		html += '<input type="text" name="node' + x + '" class="form-control m-input" placeholder="Vault URL" autocomplete="off" required>';
 		html += '<div class="input-group-append">';
 		html += '<button id="removeRow" type="button" class="btn btn-danger">Remove</button>';
 		html += '</div>';
 		html += '</div>';
 
-		$('#newRow').append(html);
+		if(x < maxField){ 
+			$('#newRow').append(html);
+		}
 	});
 
 	// remove row
 	$(document).on('click', '#removeRow', function () {
+		x--; //Decrement field counter
 		$(this).closest('#inputFormRow').remove();
 	});
 </script>

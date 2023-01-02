@@ -22,6 +22,7 @@ def clusters(request):
         form = ClusterForm(request.POST)
         if form.is_valid():
             form.save()
+            clusters = Cluster.objects.all()
             return render(request, 'clusters.html', context={'form': ClusterForm(), 'clusters': clusters, 'success': 'Cluster salvato con successo'})
         else:
             return render(request, 'clusters.html', context={'form': ClusterForm(), 'clusters': clusters, 'error': form.errors})
