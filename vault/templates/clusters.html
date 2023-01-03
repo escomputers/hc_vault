@@ -47,8 +47,16 @@
 							{% for i in clusters %}
 							<tr>
 								<td>{{ i.cluster_name }}</td>
+								{% if i.node1 == None %}
+								<td class="d-none"></td>
+								{% else %}	
 								<td>{{ i.node1 }}</td>
+								{% endif %}	
+								{% if i.node2 == None %}
+								<td class="d-none"></td>
+								{% else %}	
 								<td>{{ i.node2 }}</td>
+								{% endif %}	
 								<!--
 								<td>
 									<span class="badge bg-danger"><font size="3.1em">Remove</font></span>
