@@ -47,8 +47,16 @@
 							{% for i in clusters %}
 							<tr>
 								<td>{{ i.cluster_name }}</td>
+								{% if i.node1 == None %}
+								<td class="d-none"></td>
+								{% else %}	
 								<td>{{ i.node1 }}</td>
+								{% endif %}	
+								{% if i.node2 == None %}
+								<td class="d-none"></td>
+								{% else %}	
 								<td>{{ i.node2 }}</td>
+								{% endif %}	
 								<!--
 								<td>
 									<span class="badge bg-danger"><font size="3.1em">Remove</font></span>
@@ -132,9 +140,8 @@
 						</div><!-- card-body -->
 
 				<!-- info -->
-				<div class="alert alert-warning alert-dismissible fade show" role="alert">
-					<i class='fa fa-lightbulb'></i>
-					<strong>Info:</strong> max <b>50</b> nodes per cluster
+				<div class="alert alert-light alert-dismissible fade show" role="alert">
+					<p style="color:black;"><i class='fa fa-lightbulb'></i>&nbsp;Info: max 50 nodes per cluster</p>
 					<button type="button" class="close" data-dismiss="alert" aria-label="Close">
 						<span aria-hidden="true">&times;</span>
 					</button>
