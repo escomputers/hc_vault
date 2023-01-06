@@ -33,48 +33,24 @@
 				</div>
 
 				<div class="card-body">
-					<div class="table-responsive">
+
 					<table id="clusters" class="table table-bordered table-hover">
+						<thead>
+							<tr>
+							<th></th>
+							<th class="none">Nodes:</th>
+							<th class="none"></th>
+							<!--<th></th> for remove button-->
+							</tr>
+						</thead>
 
 						<tbody>
 							{% if clusters %}
-							<div class="float-right">
-								<button type="button" class="btn" data-toggle="collapse" data-target="#collapseme">
-									Expand/Collapse
-									<i class="fas fa-circle-chevron-up"></i>
-								</button>
-							</div>
 							{% for i in clusters %}
 							<tr>
-								<td class="bg-light"><p class="h6">{{ i.cluster_name }}</p>
-										<small class="text-muted">
-											Last check: 2023-01-03 22:32:22
-										</small>
-								</td>
-								<tr id="collapseme" class="collapse out">
-									<td><a href="{{ i.node1 }}" class="badge badge-light" target="_blank">{{ i.node1 }}</a></td>
-								</tr>
-								{% if i.node2 != None %}
-									<tr id="collapseme" class="collapse out">
-										<td><a href="{{ i.node2 }}"  class="badge badge-light" target="_blank">{{ i.node2 }}</a></td>
-									</tr>
-								{% endif %}
-								{% if i.node3 != None %}
-									<tr id="collapseme" class="collapse out">
-										<td><a href="{{ i.node3 }}" class="badge badge-light" target="_blank">{{ i.node3 }}</a></td>
-								  </tr>
-								{% endif %}
-								{% if i.node4 != None %}
-									<tr id="collapseme" class="collapse out">
-										<td><a href="{{ i.node4 }}" class="badge badge-light" target="_blank">{{ i.node4 }}</a></td>
-									</tr>
-								{% endif %}
-								{% if i.node5 != None %}
-									<tr id="collapseme" class="collapse out">
-										<td><a href="{{ i.node5 }}" class="badge badge-light" target="_blank">{{ i.node5 }}</a></td>
-									</tr>
-								{% endif %}
-							</tr>
+								<td>{{ i.cluster_name }}</td>
+								<td>{{ i.node1 }}</td>
+								<td>{{ i.node2 }}</td>
 								<!--
 								<td>
 									<span class="badge bg-danger"><font size="3.1em">Remove</font></span>
@@ -86,7 +62,7 @@
 						</tbody>
 
 					</table>
-				</div>
+
 				</div><!-- card body -->
 		  </div><!-- card -->
 
@@ -164,7 +140,7 @@
 				</div>
 
 				<!-- Pulsante submit -->
-				<button type="submit" class="submit btn btn-primary btn-block"  name="submit" value="Submit">Save</button>
+				<button type="submit" class="submit btn btn-primary btn-block"  name="submit" id="submit" value="Submit">Save</button>
 				</form>
 		  </div><!-- card -->
 	  </div><!-- container-fluid -->
@@ -172,34 +148,115 @@
 	</section>
 </div><!-- content-wrapper -->
 
-<!-- aggiunta campi dinamici -->
+<!-- datatable -->
 <script>
-	const maxField = 50; //Input fields increment limitation
-	let x = 1; //Initial field counter is 1
-
-	// add row
-	$("#addRow").click(function () {
-		x++; //Increment field counter
-
-		let html = '';
-		html += '<div id="inputFormRow">';
-		html += '<div class="input-group mb-3">';
-		html += '<div class="input-group-prepend"><span class="input-group-text"><i class="fas fa-globe"></i></span></div>';
-		html += '<input type="text" name="node' + x + '" class="form-control m-input" placeholder="Vault URL" autocomplete="off" required>';
-		html += '<div class="input-group-append">';
-		html += '<button id="removeRow" type="button" class="btn btn-danger">Remove</button>';
-		html += '</div>';
-		html += '</div>';
-
-		if(x < maxField){ 
-			$('#newRow').append(html);
-		}
+$(function () {
+	$('#clusters').DataTable({
+		"responsive": true,
+		"ordering": false
 	});
-
-	// remove row
-	$(document).on('click', '#removeRow', function () {
-		x--; //Decrement field counter
-		$(this).closest('#inputFormRow').remove();
-	});
+});
 </script>
+
+<!-- fields validation -->
+<script>
+$(document).ready(function() {
+
+	// aggiunta campi dinamici
+	function addRow() {
+		const maxField = 50; //Input fields increment limitation
+		let x = 1; //Initial field counter is 1
+
+
+			x++; //Increment field counter
+
+			let html = '';
+			html += '<div id="inputFormRow">';
+			html += '<div class="input-group mb-3">';
+			html += '<div class="input-group-prepend"><span class="input-group-text"><i class="fas fa-globe"></i></span></div>';
+			html += '<input type="text" name="node' + x + '" class="form-control m-input" placeholder="Vault URL" autocomplete="off" required>';
+			html += '<div class="input-group-append">';
+			html += '<button id="removeRow" type="button" class="btn btn-danger">Remove</button>';
+			html += '</div>';
+			html += '</div>';
+
+			if(x < maxField){ 
+				$('#newRow').append(html);
+			}
+
+		// remove row
+		$(document).on('click', '#removeRow', function () {
+			x--; //Decrement field counter
+			$(this).closest('#inputFormRow').remove();
+		});
+	}
+
+	let usr_data = {};
+
+	$("#Form").on('submit', function(event) {
+		// pass dynamic created fields to validation
+		$("input[name^='node']").each(function() {
+			$(this).rules("add", 
+					{
+							required: true,
+							url: true
+					})
+		});
+
+		// prevent default submit action
+		event.preventDefault();
+
+		if($("#Form").validate().form()) {
+			fetchSend()
+		}
+
+	})
+
+		// add row
+		$("#addRow").on('click', addRow);
+
+		// initialize the validator
+		$("#Form").validate({
+			validClass: "font-weight-bold alert-success",
+			errorClass: "font-weight-bold alert-danger",
+			rules: {
+				cluster_name: {
+					required: true,
+					minlength: 2
+				},
+				node1: {
+					required: true,
+					url: true
+				}
+			},
+			errorPlacement: function(error, element) {
+				error.insertAfter(element.parent());
+			}
+
+		});
+
+	// get all valid input fields and make a dictionary
+	function fetchSend() {
+		$("input[type=text]").each(function() {
+			usr_data[$(this).attr("name")] = $(this).val();
+		});
+
+		$.ajax({
+			url: "{% url 'clusters' %}",
+			dataType: "text",
+			method: "POST",
+			data : {
+			csrfmiddlewaretoken:$('input[name=csrfmiddlewaretoken]').val(),
+			data: JSON.stringify(usr_data),
+			},
+			success: function(data, status, xhr){
+			},
+			error: function(xhr, status, error){
+			}
+		})
+	}
+
+});
+</script>
+
 {% endblock %}
