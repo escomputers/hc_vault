@@ -67,7 +67,6 @@
 		  </div><!-- card -->
 
 		  <div class="card"><!-- second card -->
-
 				<form id="Form" action="" method="post">
 					{% csrf_token %}
 
@@ -161,10 +160,14 @@ $(function () {
 <!-- fields validation -->
 <script>
 $(document).ready(function() {
-	// add method for api key not equal to api secret
-	$.validator.addMethod("notEqualTo", function(value, element, param) {
-		return this.optional(element) || value != param;
-	}, "Node fields cannot be the same"
+	// duplicates custom validation
+	$.validator.addMethod("notEqualTo", function(value, element) { 
+		const $inputs = $("input[name^='node']");
+		const uniques = new Set($inputs.map((i, el) => el.value).get());
+		if(uniques.size < $inputs.length) {
+			return false;
+		}
+	}, "Fields cannot be the same"
 	);
 
 	// aggiunta campi dinamici
@@ -196,55 +199,55 @@ $(document).ready(function() {
 		});
 	}
 
+	// initialize usr_data
 	let usr_data = {};
+
+	// add row
+	$("#addRow").on('click', addRow);
+
+	// initialize the validator
+	$("#Form").validate({
+		validClass: "font-weight-bold alert-success",
+		errorClass: "font-weight-bold alert-danger",
+		rules: {
+			cluster_name: {
+				required: true,
+				minlength: 2
+			},
+			node1: {
+				required: true,
+				url: true
+			}
+		},
+		errorPlacement: function(error, element) {
+			error.insertAfter(element.parent());
+		}
+
+	});
 
 	$("#Form").on('submit', function(event) {
 		// pass dynamic created fields to validation
 		$("input[name^='node']").each(function() {
-			$(this).rules("add", 
-					{
-							required: true,
-							url: true,
-							notEqualTo: $(this).closest("input[name^='node']")
-					})
+			$(this).rules("add", {
+				required: true,
+				url: true,
+				notEqualTo: true
+			})
 		});
-
-		// prevent default submit action
-		event.preventDefault();
 
 		if($("#Form").validate().form()) {
 			fetchSend()
+		} else {
+			// prevent default submit action
+			event.preventDefault();
 		}
 
 	})
 
-		// add row
-		$("#addRow").on('click', addRow);
-
-		// initialize the validator
-		$("#Form").validate({
-			validClass: "font-weight-bold alert-success",
-			errorClass: "font-weight-bold alert-danger",
-			rules: {
-				cluster_name: {
-					required: true,
-					minlength: 2
-				},
-				node1: {
-					required: true,
-					url: true,
-					notEqualTo: $(this).closest("input[name^='node']")
-				}
-			},
-			errorPlacement: function(error, element) {
-				error.insertAfter(element.parent());
-			}
-
-		});
-
 	// get all valid input fields and make a dictionary
 	function fetchSend() {
-		$("input[type=text]").each(function() {
+		// $("input[type=text]").each(function() {
+		$("input[name^='node']").each(function() {
 			usr_data[$(this).attr("name")] = $(this).val();
 		});
 
