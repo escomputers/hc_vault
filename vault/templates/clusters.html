@@ -161,14 +161,20 @@ $(function () {
 <script>
 $(document).ready(function() {
 	// duplicates custom validation
-	$.validator.addMethod("notEqualTo", function(value, element) { 
+	$.validator.addMethod("noDuplicateValues", function(value, element) {
 		const $inputs = $("input[name^='node']");
-		const uniques = new Set($inputs.map((i, el) => el.value).get());
-		if(uniques.size < $inputs.length) {
-			return false;
-		}
-	}, "Fields cannot be the same"
-	);
+		const valueCounts = {};
+		$inputs.each((i, el) => {
+			const val = el.value;
+			if (val in valueCounts) {
+				valueCounts[val] += 1;
+			} else {
+				valueCounts[val] = 1;
+			}
+		});
+		return Object.values(valueCounts).every(count => count === 1);
+	}, "Fields cannot be the same");
+	
 
 	// aggiunta campi dinamici
 	function addRow() {
@@ -207,7 +213,7 @@ $(document).ready(function() {
 
 	// initialize the validator
 	$("#Form").validate({
-		validClass: "font-weight-bold alert-success",
+		validClass: "font-weight-bold alert-light",
 		errorClass: "font-weight-bold alert-danger",
 		rules: {
 			cluster_name: {
@@ -226,12 +232,12 @@ $(document).ready(function() {
 	});
 
 	$("#Form").on('submit', function(event) {
-		// pass dynamic created fields to validation
+		//* pass dynamic created fields to validation
 		$("input[name^='node']").each(function() {
 			$(this).rules("add", {
 				required: true,
 				url: true,
-				notEqualTo: true
+				noDuplicateValues: true
 			})
 		});
 
@@ -244,7 +250,7 @@ $(document).ready(function() {
 
 	})
 
-	// get all valid input fields and make a dictionary
+	// get all valid node input fields and make a dictionary
 	function fetchSend() {
 		// $("input[type=text]").each(function() {
 		$("input[name^='node']").each(function() {
