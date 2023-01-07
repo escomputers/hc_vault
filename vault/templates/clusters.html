@@ -33,11 +33,10 @@
 				</div>
 
 				<div class="card-body">
-
 					<table id="clusters" class="table table-bordered table-hover">
-						<thead>
+						<thead class="buttons">
 							<tr>
-							<th></th>
+							<th>Active clusters</th>
 							<th class="none">Nodes:</th>
 							<th class="none"></th>
 							<!--<th></th> for remove button-->
@@ -132,7 +131,7 @@
 
 				<!-- info -->
 				<div class="alert alert-light alert-dismissible fade show" role="alert">
-					<p style="color:black;"><i class='fa fa-lightbulb'></i>&nbsp;Info: max 50 nodes per cluster</p>
+					<p style="color:black;"><i class='fa fa-circle-info'></i>&nbsp;Info: max 50 nodes per cluster</p>
 					<button type="button" class="close" data-dismiss="alert" aria-label="Close">
 						<span aria-hidden="true">&times;</span>
 					</button>
@@ -150,10 +149,50 @@
 <!-- datatable -->
 <script>
 $(function () {
-	$('#clusters').DataTable({
-		"responsive": true,
-		"ordering": false
+	let table = $('#clusters').DataTable({
+		//dom: '<"top"<"left"l><"right"f>>rt<"bottom"Bip><"clear">',
+		//dom: '<"top"><"left"lf><"right">rt<"bottom"ipB><"clear">',
+		responsive: true,
+		ordering: false,
+		buttons: [
+			{
+				extend: 'copy',
+				text: '<i class="fas fa-copy"></i> Copy',
+				className: 'btn btn-light',
+				exportOptions: {
+					columns: ':visible'
+				}
+			},
+			{
+				extend: 'print',
+				text: '<i class="fas fa-print"></i> Print',
+				className: 'btn btn-light',
+				exportOptions: {
+					columns: ':visible'
+				}
+			},
+			{
+				extend: 'csv',
+				text: '<i class="fas fa-file-csv"></i> CSV',
+				className: 'btn btn-light',
+				exportOptions: {
+					columns: ':visible'
+				}
+			},
+			{
+				extend: 'pdf',
+				text: '<i class="fas fa-file-pdf"></i> PDF',
+				className: 'btn btn-light',
+				exportOptions: {
+					columns: ':visible'
+				}
+			}
+ 		]
 	});
+
+	table.buttons().container()
+	.appendTo( $('.buttons:eq(0)', table.table().container() ) );
+
 });
 </script>
 
