@@ -161,6 +161,11 @@ $(function () {
 <!-- fields validation -->
 <script>
 $(document).ready(function() {
+	// add method for api key not equal to api secret
+	$.validator.addMethod("notEqualTo", function(value, element, param) {
+		return this.optional(element) || value != param;
+	}, "Node fields cannot be the same"
+	);
 
 	// aggiunta campi dinamici
 	function addRow() {
@@ -199,7 +204,8 @@ $(document).ready(function() {
 			$(this).rules("add", 
 					{
 							required: true,
-							url: true
+							url: true,
+							notEqualTo: $(this).closest("input[name^='node']")
 					})
 		});
 
@@ -226,7 +232,8 @@ $(document).ready(function() {
 				},
 				node1: {
 					required: true,
-					url: true
+					url: true,
+					notEqualTo: $(this).closest("input[name^='node']")
 				}
 			},
 			errorPlacement: function(error, element) {
