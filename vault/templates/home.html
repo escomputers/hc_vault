@@ -21,8 +21,7 @@
 					<h5>
 						<i class="fas fa-chart-simple"></i>
 						&nbsp;Last report
-					</h5>
-          <small class="text-muted">last update at 2023-01-01 02:26:35</small>
+          </h5>
 				</div>
 
 				<div class="card-body">
@@ -33,6 +32,7 @@
                 <th>Used</th>
                 <th>Available</th>
                 <th>Status</th>
+                <th>Last update</th>
 							</tr>
 						</thead>
 
@@ -43,8 +43,12 @@
 								<td>{{ i.cluster_name }}</td>
 								<td>{{ i.entities_count }}</td>
                 <td>{{ i.threshold }}</td>
-								<td><span class="badge badge-success">Normal</span></span>
-								</td>
+								<td><span class="badge badge-success">Normal</span></td>
+                <td>
+                  <small class="text-muted">
+                    Last check: 2023-01-03 22:32:22
+                  </small>
+                </td>
 							</tr>
               {% endfor %}
               {% endif %}	

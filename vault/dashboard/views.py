@@ -16,6 +16,7 @@ def clusters(request):
     try:
         clusters = Cluster.objects.all()
         clusters_number = len(clusters)
+        clusters_data = clusters.values()
     except Cluster.DoesNotExist:
         clusters = None
 
@@ -26,11 +27,11 @@ def clusters(request):
         if form.is_valid():
             form.save()
             clusters = Cluster.objects.all()
-            return render(request, 'clusters.html', context={'form': ClusterForm(), 'clusters': clusters, 'success': 'Cluster salvato con successo', 'clusters_number': clusters_number})
+            return render(request, 'clusters.html', context={'form': ClusterForm(), 'success': 'Cluster salvato con successo', 'clusters_number': clusters_number, 'clusters_data': clusters_data})
         else:
-            return render(request, 'clusters.html', context={'form': ClusterForm(), 'clusters': clusters, 'error': form.errors, 'clusters_number': clusters_number})
+            return render(request, 'clusters.html', context={'form': ClusterForm(), 'error': form.errors, 'clusters_number': clusters_number, 'clusters_data': clusters_data})
 
-    return render(request, 'clusters.html', context={'form': ClusterForm(), 'clusters': clusters, 'clusters_number': clusters_number})
+    return render(request, 'clusters.html', context={'form': ClusterForm(), 'clusters_number': clusters_number, 'clusters_data': clusters_data})
 
 
 def alerts(request):

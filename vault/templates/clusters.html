@@ -1,6 +1,11 @@
 {% extends "index.html" %}
 
 {% block content %}
+<style>
+  .button-container {
+    float: right;
+  }
+</style>
 <div class="content-wrapper">
 <!-- Content Header (Page header) -->
   <section class="content-header">
@@ -23,18 +28,20 @@
 	<section class="content">
 		<div class="container-fluid">
 
-			<div class="card"><!-- List Clusters -->
+			<div class="card"><!-- Clusters table -->
 				<div class="card-header">
 					<h5>
 						<i class="fas fa-circle-nodes"></i>
 						&nbsp;Clusters
-						<span class="badge badge-light">{{ clusters_number }}</span>
+						<span class="badge badge-primary">{{ clusters_number }}</span>
 					</h5>
+					<!-- table buttons-->
+					<div id="button-container" class="button-container"></div>
 				</div>
 
 				<div class="card-body">
 					<table id="clusters" class="table table-bordered table-hover">
-						<thead class="buttons">
+						<thead>
 							<tr>
 							<th>Active clusters</th>
 							<th class="none">Nodes:</th>
@@ -44,13 +51,16 @@
 						</thead>
 
 						<tbody>
-							{% if clusters %}
-							{% for i in clusters %}
+							{% if clusters_data %}
+							{% for i in clusters_data %}
 							<tr>
 								<td>{{ i.cluster_name }}</td>
 								<td>{{ i.node1 }}</td>
 								<td>{{ i.node2 }}</td>
 								<!--
+									/**
+										*! INSERIRE 
+									*/
 								<td>
 									<span class="badge bg-danger"><font size="3.1em">Remove</font></span>
 								</td>
@@ -150,8 +160,7 @@
 <script>
 $(function () {
 	let table = $('#clusters').DataTable({
-		//dom: '<"top"<"left"l><"right"f>>rt<"bottom"Bip><"clear">',
-		//dom: '<"top"><"left"lf><"right">rt<"bottom"ipB><"clear">',
+		dom: '<"button-container"B>lfrtip',
 		responsive: true,
 		ordering: false,
 		buttons: [
@@ -190,9 +199,10 @@ $(function () {
  		]
 	});
 
+	/*
 	table.buttons().container()
 	.appendTo( $('.buttons:eq(0)', table.table().container() ) );
-
+	*/
 });
 </script>
 
