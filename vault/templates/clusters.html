@@ -304,7 +304,7 @@ $(document).ready(function() {
 		$("input[name^='node']").each(function() {
 			usr_data[$(this).attr("name")] = $(this).val();
 		});
-/*
+
 		$.ajax({
 			url: "{% url 'clusters' %}",
 			dataType: "text",
@@ -318,7 +318,7 @@ $(document).ready(function() {
 			error: function(xhr, status, error){
 			}
 		})
-*/
+
 	}
 
 });

@@ -1,6 +1,7 @@
 from django.shortcuts import render
 from .forms import ClusterForm
-from .models import Cluster, Nodes, Job
+from .models import Cluster, Node, Job
+from django.db import transaction
 
 def home(request):
     try:
@@ -21,14 +22,26 @@ def clusters(request):
 
     if request.method == 'POST':
         form = ClusterForm(request.POST)
-        nodes = request.POST.get('data')
+        nodes_data = request.POST.get('data')
         if form.is_valid():
             form.save()
-            last_id = (Cluster.objects.last()).id
-            nodes_model = Nodes(cluster_name_id=last_id, nodes=nodes)
-            nodes_model.save()
+            last_cluster = Cluster.objects.last()
+            urls = ["https://foo.bar", "https://foo2.bar", "https://foo3.bar"]
+            print(nodes_data)
+            # Create a list of Node objects
+            nodes = [Node(cluster=last_cluster, node_url=url) for url in urls]
+            # Use the `bulk_create` method to create all of the nodes in a single database query
+            with transaction.atomic():
+                Node.objects.bulk_create(nodes)
+            # testing = {"employee": {"name": "sonoo", "salary": 56000, "married": "yes"}}
+
+            '''
+            /**
+            *! SISTEMARE
             clusters = Cluster.objects.all()
-            return render(request, 'clusters.html', context={'form': ClusterForm(), 'success': 'Cluster salvato con successo', 'clusters_number': clusters_number, 'clusters_data': clusters_data})
+            */
+            '''
+            return render(request, 'clusters.html', context={'success': 'Cluster salvato con successo', 'clusters_number': clusters_number, 'clusters_data': clusters_data})
         else:
             return render(request, 'clusters.html', context={'form': ClusterForm(), 'error': form.errors, 'clusters_number': clusters_number, 'clusters_data': clusters_data})
 

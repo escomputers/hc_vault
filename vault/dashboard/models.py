@@ -12,9 +12,9 @@ class Cluster(models.Model):
     def __str__(self):
         return str(self.cluster_name)
 
-class Nodes(models.Model):
-    nodes = models.JSONField(blank=True, null=True)
-    cluster_name = models.OneToOneField(Cluster, on_delete=models.CASCADE, blank=True, null=True, unique=True)
+class Node(models.Model):
+    node_url = models.URLField()
+    cluster = models.ForeignKey(Cluster, on_delete=models.CASCADE)
 
     def __str__(self):
         return str(self.cluster_name)
