@@ -1,7 +1,6 @@
 from django.shortcuts import render
 from .forms import ClusterForm
-from .models import Cluster, Job
-import json
+from .models import Cluster, Nodes, Job
 
 def home(request):
     try:
@@ -23,9 +22,11 @@ def clusters(request):
     if request.method == 'POST':
         form = ClusterForm(request.POST)
         nodes = request.POST.get('data')
-        print(nodes)
         if form.is_valid():
             form.save()
+            last_id = (Cluster.objects.last()).id
+            nodes_model = Nodes(cluster_name_id=last_id, nodes=nodes)
+            nodes_model.save()
             clusters = Cluster.objects.all()
             return render(request, 'clusters.html', context={'form': ClusterForm(), 'success': 'Cluster salvato con successo', 'clusters_number': clusters_number, 'clusters_data': clusters_data})
         else:

@@ -230,22 +230,21 @@ $(document).ready(function() {
 		const maxField = 50; //Input fields increment limitation
 		let x = 1; //Initial field counter is 1
 
+		x++; //Increment field counter
 
-			x++; //Increment field counter
+		let html = '';
+		html += '<div id="inputFormRow">';
+		html += '<div class="input-group mb-3">';
+		html += '<div class="input-group-prepend"><span class="input-group-text"><i class="fas fa-globe"></i></span></div>';
+		html += '<input type="text" name="node' + x + '" class="form-control m-input" placeholder="Vault URL" autocomplete="off" required>';
+		html += '<div class="input-group-append">';
+		html += '<button id="removeRow" type="button" class="btn btn-danger">Remove</button>';
+		html += '</div>';
+		html += '</div>';
 
-			let html = '';
-			html += '<div id="inputFormRow">';
-			html += '<div class="input-group mb-3">';
-			html += '<div class="input-group-prepend"><span class="input-group-text"><i class="fas fa-globe"></i></span></div>';
-			html += '<input type="text" name="node' + x + '" class="form-control m-input" placeholder="Vault URL" autocomplete="off" required>';
-			html += '<div class="input-group-append">';
-			html += '<button id="removeRow" type="button" class="btn btn-danger">Remove</button>';
-			html += '</div>';
-			html += '</div>';
-
-			if(x < maxField){ 
-				$('#newRow').append(html);
-			}
+		if(x < maxField){ 
+			$('#newRow').append(html);
+		}
 
 		// remove row
 		$(document).on('click', '#removeRow', function () {
@@ -305,7 +304,7 @@ $(document).ready(function() {
 		$("input[name^='node']").each(function() {
 			usr_data[$(this).attr("name")] = $(this).val();
 		});
-
+/*
 		$.ajax({
 			url: "{% url 'clusters' %}",
 			dataType: "text",
@@ -319,6 +318,7 @@ $(document).ready(function() {
 			error: function(xhr, status, error){
 			}
 		})
+*/
 	}
 
 });
