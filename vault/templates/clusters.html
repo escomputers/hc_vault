@@ -76,7 +76,7 @@
 		  </div><!-- card -->
 
 		  <div class="card"><!-- second card -->
-				<form id="Form" action="" method="post">
+				<form id="Form" action="">
 					{% csrf_token %}
 
 					<!-- sezione per errori/messaggi successo del form -->
@@ -209,6 +209,15 @@ $(function () {
 <!-- fields validation -->
 <script>
 $(document).ready(function() {
+	// initialize usr_data
+	let usr_data = {'cluster_name': '', nodes: {} };
+
+	// add method for checking spaces
+	$.validator.addMethod("noSpace", function(value, element) { 
+		return value.indexOf(" ") < 0 && value != ""; 
+		}, "No spaces"
+	);
+
 	// duplicates custom validation
 	$.validator.addMethod("noDuplicateValues", function(value, element) {
 		const $inputs = $("input[name^='node']");
@@ -253,10 +262,7 @@ $(document).ready(function() {
 		});
 	}
 
-	// initialize usr_data
-	let usr_data = {};
-
-	// add row
+	// on click add row
 	$("#addRow").on('click', addRow);
 
 	// initialize the validator
@@ -266,7 +272,8 @@ $(document).ready(function() {
 		rules: {
 			cluster_name: {
 				required: true,
-				minlength: 2
+				minlength: 2,
+				noSpace: true
 			},
 			node1: {
 				required: true,
@@ -300,9 +307,12 @@ $(document).ready(function() {
 
 	// get all valid node input fields and make a dictionary
 	function fetchSend() {
-		// $("input[type=text]").each(function() {
+		// add cluster_name to dictionary
+		usr_data.cluster_name = $("input[name='cluster_name']").val();
+
+		// add nodes fields to dictionary
 		$("input[name^='node']").each(function() {
-			usr_data[$(this).attr("name")] = $(this).val();
+			usr_data.nodes[$(this).attr("name")] = $(this).val();
 		});
 
 		$.ajax({
