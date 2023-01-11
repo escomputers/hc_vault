@@ -148,8 +148,9 @@
 				</div>
 
 				<!-- Pulsante submit -->
-				<button type="submit" class="submit btn btn-primary btn-block"  name="submit" id="submit" value="Submit">Save</button>
-				</form>
+				<button type="submit" class="submit btn btn-primary btn-block" name="submit" id="submit" value="Submit">Save</button>
+				<button type="button" class="btn btn-danger btn-block" id="test">test</button>	
+			</form>
 		  </div><!-- card -->
 	  </div><!-- container-fluid -->
 
@@ -304,6 +305,23 @@ $(document).ready(function() {
 		}
 
 	})
+
+	$("#test").on("click", function() {
+		let jsonObj = [];
+		let item = {}
+
+		cluster = $("input[name='cluster_name']").val()
+		item ["cluster_name"] = cluster;
+
+		$("input[name^='node']").each(function() {
+			nodes = $(this).val()
+			item ["nodes"] = nodes;
+		});
+
+		jsonObj.push(item);
+		const data = JSON.stringify(jsonObj)
+		console.log(data);
+	});
 
 	// get all valid node input fields and make a dictionary
 	function fetchSend() {
