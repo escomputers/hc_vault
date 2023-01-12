@@ -149,7 +149,6 @@
 
 				<!-- Pulsante submit -->
 				<button type="submit" class="submit btn btn-primary btn-block" name="submit" id="submit" value="Submit">Save</button>
-				<button type="button" class="btn btn-danger btn-block" id="test">test</button>	
 			</form>
 		  </div><!-- card -->
 	  </div><!-- container-fluid -->
@@ -211,7 +210,9 @@ $(function () {
 <script>
 $(document).ready(function() {
 	// initialize usr_data
-	let usr_data = {'cluster_name': '', nodes: {} };
+
+	//let usr_data = {'cluster_name': '', nodes: {} };
+	let dati = [];
 
 	// add method for checking spaces
 	$.validator.addMethod("noSpace", function(value, element) { 
@@ -306,32 +307,14 @@ $(document).ready(function() {
 
 	})
 
-	$("#test").on("click", function() {
-		let jsonObj = [];
-		let item = {}
-
-		cluster = $("input[name='cluster_name']").val()
-		item ["cluster_name"] = cluster;
-
-		$("input[name^='node']").each(function() {
-			nodes = $(this).val()
-			item ["nodes"] = nodes;
-		});
-
-		jsonObj.push(item);
-		const data = JSON.stringify(jsonObj)
-		console.log(data);
-	});
-
 	// get all valid node input fields and make a dictionary
 	function fetchSend() {
 		// add cluster_name to dictionary
-		usr_data.cluster_name = $("input[name='cluster_name']").val();
+		dati.push($("input[name='cluster_name']").val());
 
-		// add nodes fields to dictionary
 		$("input[name^='node']").each(function() {
-			usr_data.nodes[$(this).attr("name")] = $(this).val();
-		});
+      dati.push($(this).val());
+    });
 
 		$.ajax({
 			url: "{% url 'clusters' %}",
@@ -339,7 +322,7 @@ $(document).ready(function() {
 			method: "POST",
 			data : {
 			csrfmiddlewaretoken:$('input[name=csrfmiddlewaretoken]').val(),
-			data: JSON.stringify(usr_data),
+			data: JSON.stringify(dati),
 			},
 			success: function(data, status, xhr){
 			},
