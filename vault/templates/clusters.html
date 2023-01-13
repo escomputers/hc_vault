@@ -1,6 +1,11 @@
 {% extends "index.html" %}
 
 {% block content %}
+<style>
+  .button-container {
+    float: right;
+  }
+</style>
 <div class="content-wrapper">
 <!-- Content Header (Page header) -->
   <section class="content-header">
@@ -23,18 +28,20 @@
 	<section class="content">
 		<div class="container-fluid">
 
-			<div class="card"><!-- List Clusters -->
+			<div class="card"><!-- Clusters table -->
 				<div class="card-header">
 					<h5>
 						<i class="fas fa-circle-nodes"></i>
 						&nbsp;Clusters
-						<span class="badge badge-light">{{ clusters_number }}</span>
+						<span class="badge badge-primary">{{ clusters_number }}</span>
 					</h5>
+					<!-- table buttons-->
+					<div id="button-container" class="button-container"></div>
 				</div>
 
 				<div class="card-body">
 					<table id="clusters" class="table table-bordered table-hover">
-						<thead class="buttons">
+						<thead>
 							<tr>
 							<th>Active clusters</th>
 							<th class="none">Nodes:</th>
@@ -44,13 +51,16 @@
 						</thead>
 
 						<tbody>
-							{% if clusters %}
-							{% for i in clusters %}
+							{% if clusters_data %}
+							{% for i in clusters_data %}
 							<tr>
 								<td>{{ i.cluster_name }}</td>
 								<td>{{ i.node1 }}</td>
 								<td>{{ i.node2 }}</td>
 								<!--
+									/**
+										*! INSERIRE 
+									*/
 								<td>
 									<span class="badge bg-danger"><font size="3.1em">Remove</font></span>
 								</td>
@@ -66,7 +76,7 @@
 		  </div><!-- card -->
 
 		  <div class="card"><!-- second card -->
-				<form id="Form" action="" method="post">
+				<form id="Form" action="">
 					{% csrf_token %}
 
 					<!-- sezione per errori/messaggi successo del form -->
@@ -138,8 +148,8 @@
 				</div>
 
 				<!-- Pulsante submit -->
-				<button type="submit" class="submit btn btn-primary btn-block"  name="submit" id="submit" value="Submit">Save</button>
-				</form>
+				<button type="submit" class="submit btn btn-primary btn-block" name="submit" id="submit" value="Submit">Save</button>
+			</form>
 		  </div><!-- card -->
 	  </div><!-- container-fluid -->
 
@@ -150,8 +160,7 @@
 <script>
 $(function () {
 	let table = $('#clusters').DataTable({
-		//dom: '<"top"<"left"l><"right"f>>rt<"bottom"Bip><"clear">',
-		//dom: '<"top"><"left"lf><"right">rt<"bottom"ipB><"clear">',
+		dom: '<"button-container"B>lfrtip',
 		responsive: true,
 		ordering: false,
 		buttons: [
@@ -190,15 +199,36 @@ $(function () {
  		]
 	});
 
+	/*
 	table.buttons().container()
 	.appendTo( $('.buttons:eq(0)', table.table().container() ) );
-
+	*/
 });
 </script>
 
 <!-- fields validation -->
 <script>
 $(document).ready(function() {
+	// initialize nodes array
+	let nodes = [];
+
+	// initialize object containing form data and function for add elements to it
+	let obj = {
+    length: 0,
+
+    addElem: function addElem(elem) {
+			// obj.length is automatically incremented 
+			// every time an element is added.
+			[].push.call(this, elem);
+    }
+	};
+
+	// add method for checking spaces
+	$.validator.addMethod("noSpace", function(value, element) { 
+		return value.indexOf(" ") < 0 && value != ""; 
+		}, "No spaces"
+	);
+
 	// duplicates custom validation
 	$.validator.addMethod("noDuplicateValues", function(value, element) {
 		const $inputs = $("input[name^='node']");
@@ -220,22 +250,21 @@ $(document).ready(function() {
 		const maxField = 50; //Input fields increment limitation
 		let x = 1; //Initial field counter is 1
 
+		x++; //Increment field counter
 
-			x++; //Increment field counter
+		let html = '';
+		html += '<div id="inputFormRow">';
+		html += '<div class="input-group mb-3">';
+		html += '<div class="input-group-prepend"><span class="input-group-text"><i class="fas fa-globe"></i></span></div>';
+		html += '<input type="text" name="node' + x + '" class="form-control m-input" placeholder="Vault URL" autocomplete="off" required>';
+		html += '<div class="input-group-append">';
+		html += '<button id="removeRow" type="button" class="btn btn-danger">Remove</button>';
+		html += '</div>';
+		html += '</div>';
 
-			let html = '';
-			html += '<div id="inputFormRow">';
-			html += '<div class="input-group mb-3">';
-			html += '<div class="input-group-prepend"><span class="input-group-text"><i class="fas fa-globe"></i></span></div>';
-			html += '<input type="text" name="node' + x + '" class="form-control m-input" placeholder="Vault URL" autocomplete="off" required>';
-			html += '<div class="input-group-append">';
-			html += '<button id="removeRow" type="button" class="btn btn-danger">Remove</button>';
-			html += '</div>';
-			html += '</div>';
-
-			if(x < maxField){ 
-				$('#newRow').append(html);
-			}
+		if(x < maxField){ 
+			$('#newRow').append(html);
+		}
 
 		// remove row
 		$(document).on('click', '#removeRow', function () {
@@ -244,10 +273,7 @@ $(document).ready(function() {
 		});
 	}
 
-	// initialize usr_data
-	let usr_data = {};
-
-	// add row
+	// on click add row
 	$("#addRow").on('click', addRow);
 
 	// initialize the validator
@@ -257,7 +283,8 @@ $(document).ready(function() {
 		rules: {
 			cluster_name: {
 				required: true,
-				minlength: 2
+				minlength: 2,
+				noSpace: true
 			},
 			node1: {
 				required: true,
@@ -289,12 +316,18 @@ $(document).ready(function() {
 
 	})
 
-	// get all valid node input fields and make a dictionary
+	// get input fields values and make AJAX call
 	function fetchSend() {
-		// $("input[type=text]").each(function() {
+		// add cluster_name to form data array 
+		obj.addElem($("input[name='cluster_name']").val());
+
+		// add nodes fields to separate array
 		$("input[name^='node']").each(function() {
-			usr_data[$(this).attr("name")] = $(this).val();
-		});
+      nodes.push($(this).val());
+    });
+
+		// add nodes to form data array
+		obj.addElem(nodes);
 
 		$.ajax({
 			url: "{% url 'clusters' %}",
@@ -302,13 +335,14 @@ $(document).ready(function() {
 			method: "POST",
 			data : {
 			csrfmiddlewaretoken:$('input[name=csrfmiddlewaretoken]').val(),
-			data: JSON.stringify(usr_data),
+			data: JSON.stringify(obj),
 			},
 			success: function(data, status, xhr){
 			},
 			error: function(xhr, status, error){
 			}
 		})
+
 	}
 
 });
