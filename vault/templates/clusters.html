@@ -209,10 +209,19 @@ $(function () {
 <!-- fields validation -->
 <script>
 $(document).ready(function() {
-	// initialize usr_data
+	// initialize nodes array
+	let nodes = [];
 
-	//let usr_data = {'cluster_name': '', nodes: {} };
-	let dati = [];
+	// initialize object containing form data and function for add elements to it
+	let obj = {
+    length: 0,
+
+    addElem: function addElem(elem) {
+			// obj.length is automatically incremented 
+			// every time an element is added.
+			[].push.call(this, elem);
+    }
+	};
 
 	// add method for checking spaces
 	$.validator.addMethod("noSpace", function(value, element) { 
@@ -307,14 +316,18 @@ $(document).ready(function() {
 
 	})
 
-	// get all valid node input fields and make a dictionary
+	// get input fields values and make AJAX call
 	function fetchSend() {
-		// add cluster_name to dictionary
-		dati.push($("input[name='cluster_name']").val());
+		// add cluster_name to form data array 
+		obj.addElem($("input[name='cluster_name']").val());
 
+		// add nodes fields to separate array
 		$("input[name^='node']").each(function() {
-      dati.push($(this).val());
+      nodes.push($(this).val());
     });
+
+		// add nodes to form data array
+		obj.addElem(nodes);
 
 		$.ajax({
 			url: "{% url 'clusters' %}",
@@ -322,7 +335,7 @@ $(document).ready(function() {
 			method: "POST",
 			data : {
 			csrfmiddlewaretoken:$('input[name=csrfmiddlewaretoken]').val(),
-			data: JSON.stringify(dati),
+			data: JSON.stringify(obj),
 			},
 			success: function(data, status, xhr){
 			},

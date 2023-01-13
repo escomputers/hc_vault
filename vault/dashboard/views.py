@@ -16,23 +16,20 @@ def clusters(request):
     if request.method == 'POST':
         data_str = request.POST.get('data')
         data_dict = json.loads(data_str)
-        cluster_name = data_dict.get('cluster_name')
+        cluster_name = data_dict.get('0')
         try:
             cluster = Cluster.objects.get(cluster_name=cluster_name)
         except Cluster.DoesNotExist:
             cluster = Cluster.objects.create(cluster_name=cluster_name)
             last_cluster = Cluster.objects.last()
-            '''
-            urls = ["https://foo.bar", "https://foo2.bar", "https://foo3.bar"]
+            urls = data_dict.get('1')
             # Create a list of Node objects
             nodes = [Node(cluster=last_cluster, node_url=url) for url in urls]
             # Use the `bulk_create` method to create all of the nodes in a single database query
             with transaction.atomic():
                 Node.objects.bulk_create(nodes)
-            '''
         finally:
             return render(request, 'clusters.html')
-
         '''
         /**
         *! SISTEMARE
