@@ -13,6 +13,16 @@ def home(request):
 
 
 def clusters(request):
+    try:
+        clusters = Cluster.objects.all()
+        clusters_number = len(clusters)
+        clusters_data = clusters.values()
+    except Cluster.DoesNotExist:
+        clusters = None
+        clusters_number = 0
+        clusters_data = None
+
+    # user has just submitted a valid form
     if request.method == 'POST':
         data_str = request.POST.get('data')
         data_dict = json.loads(data_str)
@@ -28,29 +38,11 @@ def clusters(request):
             # Use the `bulk_create` method to create all of the nodes in a single database query
             with transaction.atomic():
                 Node.objects.bulk_create(nodes)
-        finally:
-            return render(request, 'clusters.html')
-        '''
-        /**
-        *! SISTEMARE
-        clusters = Cluster.objects.all()
-        */
-        '''
-        '''
-            return render(request, 'clusters.html', context={'success': 'Cluster salvato con successo', 'clusters_number': clusters_number, 'clusters_data': clusters_data})
-        else:
-            return render(request, 'clusters.html', context={'form': ClusterForm(), 'error': form.errors, 'clusters_number': clusters_number, 'clusters_data': clusters_data})
-        '''
-    else:
-        try:
-            clusters = Cluster.objects.all()
-            clusters_number = len(clusters)
-            clusters_data = clusters.values()
-        except Cluster.DoesNotExist:
-            clusters = None
-        finally:
-            return render(request, 'clusters.html', context={'clusters_number': clusters_number, 'clusters_data': clusters_data})
 
+        # return render(request, 'clusters.html', context={'success': 'Cluster salvato con successo', 'clusters_number': clusters_number, 'clusters_data': clusters_data})
+        # return render(request, 'clusters.html', context={'error': 'Cluster esistente', 'clusters_number': clusters_number, 'clusters_data': clusters_data})
+
+    return render(request, 'clusters.html', context={'clusters_number': clusters_number, 'clusters_data': clusters_data})
 
 def alerts(request):
     return render(request, 'alerts.html')
