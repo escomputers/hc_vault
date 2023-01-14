@@ -22,13 +22,14 @@ def clusters(request):
         clusters_number = 0
         clusters_data = None
 
-    # user has just submitted a valid form
     if request.method == 'POST':
+        # user has just submitted a valid form
         data_str = request.POST.get('data')
         data_dict = json.loads(data_str)
         cluster_name = data_dict.get('0')
         try:
             cluster = Cluster.objects.get(cluster_name=cluster_name)
+            return render(request, 'clusters.html', context = {'clusters_number': clusters_number, 'clusters_data': clusters_data, 'error': 'error'})
         except Cluster.DoesNotExist:
             cluster = Cluster.objects.create(cluster_name=cluster_name)
             last_cluster = Cluster.objects.last()
@@ -38,11 +39,10 @@ def clusters(request):
             # Use the `bulk_create` method to create all of the nodes in a single database query
             with transaction.atomic():
                 Node.objects.bulk_create(nodes)
+            return render(request, 'clusters.html', context = {'clusters_number': clusters_number, 'clusters_data': clusters_data, 'success': 'success'})
 
-        # return render(request, 'clusters.html', context={'success': 'Cluster salvato con successo', 'clusters_number': clusters_number, 'clusters_data': clusters_data})
-        # return render(request, 'clusters.html', context={'error': 'Cluster esistente', 'clusters_number': clusters_number, 'clusters_data': clusters_data})
+    return render(request, 'clusters.html', context = {'clusters_number': clusters_number, 'clusters_data': clusters_data})
 
-    return render(request, 'clusters.html', context={'clusters_number': clusters_number, 'clusters_data': clusters_data})
 
 def alerts(request):
     return render(request, 'alerts.html')
