@@ -75,21 +75,13 @@
 				</div><!-- card body -->
 		  </div><!-- card -->
 
-		  <div class="card"><!-- second card -->
-				<form id="Form" action="">
+		  <div class="card">
+				<form id="Form" action="" method="POST">
 					{% csrf_token %}
 
-					<!-- sezione per errori/messaggi successo del form -->
-					{% if error %}
-					<div class="alert alert-danger alert-dismissible fade show" role="alert"> 
-						<i class="fas fa-circle-exclamation"></i><strong>&nbsp;{{ error }}</strong>
-						<button type="button" class="close" data-dismiss="alert" aria-label="Close">
-							<span aria-hidden="true">&times;</span>
-						</button>
-					</div>
-					{% endif %}
+					<!-- sezione per messaggi successo del form -->
 					{% if success %}
-					<div class="alert alert-success alert-dismissible fade show" role="alert"> 
+					<div class="alert alert-success alert-dismissible fade show" id="success" role="alert"> 
 						<i class="fas fa-circle-check"></i><strong>&nbsp;{{ success }}</strong>
 						<button type="button" class="close" data-dismiss="alert" aria-label="Close">
 							<span aria-hidden="true">&times;</span>
@@ -111,7 +103,7 @@
 										<div class="input-group-prepend">
 											<span class="input-group-text"><i class="fas fa-id-badge"></i></span>
 										</div>
-									<input type="text" name="cluster_name" class="form-control" placeholder="Cluster name" required>
+									<input type="text" name="cluster_name" id="cluster_name" class="form-control" placeholder="Cluster name" required>
 									<!-- Add URLs button -->
 									<div class="input-group-append">
 										<button type="button" class="btn add btn-primary" id="addRow"><i class="fas fa-plus"></i>
@@ -196,13 +188,9 @@ $(function () {
 					columns: ':visible'
 				}
 			}
- 		]
+			]
 	});
 
-	/*
-	table.buttons().container()
-	.appendTo( $('.buttons:eq(0)', table.table().container() ) );
-	*/
 });
 </script>
 
@@ -318,6 +306,7 @@ $(document).ready(function() {
 
 	// get input fields values and make AJAX call
 	function fetchSend() {
+		$("#Form").submit(function (e) {
 		// add cluster_name to form data array 
 		obj.addElem($("input[name='cluster_name']").val());
 
@@ -329,23 +318,61 @@ $(document).ready(function() {
 		// add nodes to form data array
 		obj.addElem(nodes);
 
+		e.preventDefault();
+
 		$.ajax({
-			url: "{% url 'clusters' %}",
-			dataType: "text",
-			method: "POST",
+			url: "{% url 'submit' %}",
+			type: "POST",
 			data : {
 			csrfmiddlewaretoken:$('input[name=csrfmiddlewaretoken]').val(),
 			data: JSON.stringify(obj),
 			},
-			success: function(data, status, xhr){
+			success: function(response){
+				$("#cluster_name").focus();
+				let instance = JSON.parse(response["instance"])
+				alert(instance)
 			},
-			error: function(xhr, status, error){
+			error: function(response){
+				alert(response["responseJSON"]["error"]);
 			}
 		})
+	})
+}
 
-	}
+$("#cluster_name").focusout(function (e) {
+	e.preventDefault();
+
+	// get the cluster name
+	let cluster_name = $(this).val();
+
+	// GET AJAX request
+	$.ajax({
+		type: 'GET',
+		url: "{% url 'get-cluster' %}",
+		data: {"cluster_name": cluster_name},
+		success: function (response) {
+			// if not valid user, alert the user
+			if(!response["valid"]){
+				// custom popup
+				Swal.fire({
+					icon: 'error',
+					title: 'Error:',
+					text: 'Cluster already exists!',
+					confirmButtonColor: '#007bff',
+				})
+
+				let ClusterName = $("#cluster_name");
+				ClusterName.val("")
+				ClusterName.focus()
+			}
+		},
+		error: function (response) {
+			// console.log(response)
+		}
+	})
+})
 
 });
-</script>
 
+</script>
 {% endblock %}
