@@ -31,7 +31,7 @@ def clusters(request):
         clusters_number = 0
         clusters_data = None
 
-    # save data on successfull submission
+    # save data on successful submission
     if request.method == 'POST':
         cluster_form = ClusterForm(request.POST)
         if cluster_form.is_valid():
