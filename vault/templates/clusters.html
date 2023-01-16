@@ -124,7 +124,7 @@
 										<div class="input-group-prepend">
 											<span class="input-group-text"><i class="fas fa-computer"></i></span>
 										</div>
-									<input type="text" name="json_nodes" id="json_nodes" class="form-control m-input" placeholder="Add nodes">
+									<input type="text" name="json_nodes" id="json_nodes" class="form-control m-input" placeholder="Add nodes" readonly>
 								</div>
 
 									<div id="inputFormRow">
@@ -316,8 +316,7 @@ $(document).ready(function() {
 				obj.addElem(nodes);
 
 				// fill the input field nodes with values from the array
-				$("#nodes").val(obj)
-				//$("#json_nodes").val('{"employee": {"name": "sonoo", "salary": 56000, "married": true}}')
+				$("#json_nodes").val(JSON.stringify(obj))
 
 				fetchSend()
 		} else {
