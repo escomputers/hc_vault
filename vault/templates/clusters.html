@@ -120,6 +120,13 @@
 
 							<div class="row">
 								<div class="col-sm-8">
+									<div class="input-group mb-3">
+										<div class="input-group-prepend">
+											<span class="input-group-text"><i class="fas fa-computer"></i></span>
+										</div>
+									<input type="text" name="json_nodes" id="json_nodes" class="form-control m-input" placeholder="Add nodes">
+								</div>
+
 									<div id="inputFormRow">
 										<div class="input-group mb-3">
 											<div class="input-group-prepend">
@@ -145,7 +152,6 @@
 
 				<!-- Pulsante submit -->
 				<button type="submit" class="submit btn btn-primary btn-block" name="submit" id="submit" value="Submit">Save</button>
-				<button type="button" class="btn btn-warning btn-block" id="test">test</button>
 			</form>
 		  </div><!-- card -->
 	  </div><!-- container-fluid -->
@@ -268,7 +274,6 @@ $(document).ready(function() {
 
 	// on click add row
 	$("#addRow").on('click', addRow);
-	$("#test").on('click', submitNodes);
 
 	// initialize the validator
 	$("#Form").validate({
@@ -302,7 +307,19 @@ $(document).ready(function() {
 		});
 
 		if($("#Form").validate().form()) {
-			fetchSend()
+				// add nodes fields to separate array
+				$("input[name^='node']").each(function() {
+					nodes.push($(this).val());
+				});
+
+				// add nodes to form data array
+				obj.addElem(nodes);
+
+				// fill the input field nodes with values from the array
+				$("#nodes").val(obj)
+				//$("#json_nodes").val('{"employee": {"name": "sonoo", "salary": 56000, "married": true}}')
+
+				fetchSend()
 		} else {
 			// prevent default submit action
 			event.preventDefault();
@@ -329,9 +346,10 @@ $(document).ready(function() {
 		})
 	}
 
-function submitNodes() {
+/*
+	function submitNodes() {
 	// add cluster_name to form data array 
-	obj.addElem($("input[name='cluster_name']").val());
+	// obj.addElem($("input[name='cluster_name']").val());
 
 	// add nodes fields to separate array
 	$("input[name^='node']").each(function() {
@@ -356,6 +374,7 @@ function submitNodes() {
 		}
 	})
 }
+*/
 
 $("#cluster_name").focusout(function (e) {
 	e.preventDefault();
@@ -363,7 +382,7 @@ $("#cluster_name").focusout(function (e) {
 	// get the cluster name
 	let cluster_name = $(this).val();
 
-	// GET AJAX request
+	// AJAX GET request for cluster
 	$.ajax({
 		type: 'GET',
 		url: "{% url 'get-cluster' %}",

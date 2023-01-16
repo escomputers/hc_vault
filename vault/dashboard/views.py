@@ -1,5 +1,5 @@
 from django.shortcuts import render
-from .models import Cluster, Node, Job
+from .models import Cluster, Job
 from django.db import transaction
 import json
 from .forms import ClusterForm
@@ -72,7 +72,7 @@ def nodes(request):
             try:
                 for url in urls:
                     url = Node.objects.get(node_url=url)
-                    return JsonResponse({"error": "Node exists"}, status=400)
+                    return JsonResponse({"error": "Node already exists"}, status=400)
             except Node.DoesNotExist:
                 last_cluster = Cluster.objects.last()
                 # Create a list of Node objects
@@ -81,7 +81,7 @@ def nodes(request):
                 with transaction.atomic():
                     Node.objects.bulk_create(nodes)
 
-                return JsonResponse({"success": data_str}, status=200)
+                return JsonResponse({"success": "Node saved"}, status=200)
 
     # some form errors occured
     return JsonResponse({"error": ""}, status=400)
