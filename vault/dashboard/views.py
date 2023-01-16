@@ -20,7 +20,6 @@ def home(request):
     return render(request, 'home.html', context={'clusters': clusters})
 
 
-
 def clusters(request):
     try:
         clusters = Cluster.objects.all()
@@ -62,6 +61,32 @@ def getCluster(request):
     return JsonResponse({}, status = 400)
 
 
+def nodes(request):
+    # request should be ajax and method should be POST.
+    if is_ajax(request=request) and request.method == "POST":
+        data_str = request.POST.get('data')
+        
+        if data_str is not None:
+            data_dict = json.loads(data_str)
+            urls = data_dict.get('1')
+            try:
+                for url in urls:
+                    url = Node.objects.get(node_url=url)
+                    return JsonResponse({"error": "Node exists"}, status=400)
+            except Node.DoesNotExist:
+                last_cluster = Cluster.objects.last()
+                # Create a list of Node objects
+                nodes = [Node(cluster=last_cluster, node_url=url) for url in urls]
+                # Use the `bulk_create` method to create all of the nodes in a single database query
+                with transaction.atomic():
+                    Node.objects.bulk_create(nodes)
+
+                return JsonResponse({"success": data_str}, status=200)
+
+    # some form errors occured
+    return JsonResponse({"error": ""}, status=400)
+
+
 def submit(request):
     # request should be ajax and method should be POST.
     if is_ajax(request=request) and request.method == "POST":
@@ -80,20 +105,6 @@ def submit(request):
 
     # some error occured
     return JsonResponse({"error": ""}, status=400)
-
-
-'''
-data_str = request.POST.get('data')
-if data_str is not None:
-    data_dict = json.loads(data_str)
-    last_cluster = Cluster.objects.last()
-    urls = data_dict.get('1')
-    # Create a list of Node objects
-    nodes = [Node(cluster=last_cluster, node_url=url) for url in urls]
-    # Use the `bulk_create` method to create all of the nodes in a single database query
-    with transaction.atomic():
-        Node.objects.bulk_create(nodes)
-'''
 
 
 def alerts(request):
