@@ -359,7 +359,7 @@ $(document).ready(function() {
 	obj.addElem(nodes);
 
 	$.ajax({
-		url: "{% url 'nodes' %}",
+		url: "#",
 		type: "POST",
 		data : {
 		csrfmiddlewaretoken:$('input[name=csrfmiddlewaretoken]').val(),
