@@ -8,18 +8,17 @@ class Cluster(models.Model):
     entities_count = models.IntegerField(blank=True, null=True)
     entities_metadata = models.CharField(max_length=256, blank=True, null=True)
     threshold = models.IntegerField(validators=[MinValueValidator(1), MaxValueValidator(999999)], blank=True, null=True)
-    json_nodes = models.JSONField(unique=True, blank=True, null=True)
 
     def __str__(self):
         return str(self.cluster_name)
-'''
+
+
 class Node(models.Model):
-    node_url = models.URLField()
-    cluster = models.ForeignKey(Cluster, on_delete=models.CASCADE)
+    url = models.URLField(blank=True, null=True, unique=True)
+    cluster = models.ForeignKey(Cluster, related_name='nodes', on_delete=models.CASCADE)
 
     def __str__(self):
         return str(self.cluster_name)
-'''
 
 
 class Job(models.Model):

@@ -1,8 +1,8 @@
 from django.shortcuts import render
-from .models import Cluster, Job
+from .models import Cluster, Node, Job
 from django.db import transaction
 import json
-from .forms import ClusterForm
+from .forms import ClusterForm, NodeForm
 from django.http import JsonResponse
 from django.core import serializers
 
@@ -65,20 +65,45 @@ def submit(request):
     # request should be ajax and method should be POST.
     if is_ajax(request=request) and request.method == "POST":
         # get the form data
-        cluster_form = ClusterForm(request.POST)
-        # save the data and after fetch the object in instance
-        if cluster_form.is_valid():
-            instance = cluster_form.save()
-            # serialize in new friend object in json
+        form = ClusterForm(request.POST)
+        # save data and after fetch the object in instance
+        if form.is_valid():
+            instance = form.save()
+            # serialize in new cluster object in json
             ser_instance = serializers.serialize('json', [ instance, ])
             # send to client side
             return JsonResponse({"instance": ser_instance}, status=200)
         else:
             # some form errors occured
-            return JsonResponse({"error": cluster_form.errors}, status=400)
+            return JsonResponse({"error": form.errors}, status=400)
 
     # some error occured
     return JsonResponse({"error": ""}, status=400)
+
+
+def nodes(request):
+    # request should be ajax and method should be POST.
+    if is_ajax(request=request) and request.method == "POST":
+        # get the form data
+        form = NodeForm(request.POST)
+        '''
+        last_cluster = Cluster.objects.last()
+        # nodes = [Node(cluster=last_cluster, url=url) for url in urls]
+
+        # Use the `bulk_create` method to create all of the nodes in a single database query
+        with transaction.atomic():
+            Node.objects.bulk_create(nodes)
+        # save the data and after fetch the object in instance
+        '''
+        if form.is_valid():
+            form.save()
+            # send to client side
+            return render(request, 'clusters.html', context={'success': 'Node saved!'})
+        else:
+            # some form errors occured
+            return render(request, 'clusters.html', context={'error': 'Node already exists!'})
+
+        return render(request, 'clusters.html')
 
 
 def alerts(request):
