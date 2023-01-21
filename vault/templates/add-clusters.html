@@ -1,0 +1,131 @@
+{% extends "index.html" %}
+
+{% block content %}
+<div class="content-wrapper">
+<!-- Content Header (Page header) -->
+  <section class="content-header">
+    <div class="container-fluid">
+      <div class="row mb-2">
+        <div class="col-sm-6">
+  		  	<nav aria-label="breadcrumb">
+						<ol class="breadcrumb">
+							<li class="breadcrumb-item"><a href="{% url 'dashboard' %}">Home</a></li>
+							<li class="breadcrumb-item"><a href="#">Settings</a></li>
+							<li class="breadcrumb-item active" aria-current="page">Add Clusters</li>
+						</ol>
+					</nav>
+				</div>
+      </div>
+    </div>
+  </section>
+
+	<!-- Main content -->
+	<section class="content">
+		<div class="container-fluid">
+
+		  <div class="card">
+				<form id="Form" action="" method="POST">
+					{% csrf_token %}
+
+					<!-- sezione per messaggi successo del form -->
+					{% if form.errors %}
+						{% for field in form %}
+						{% for error in field.errors %}
+						<div class="alert alert-danger alert-dismissible fade show" role="alert">
+							<i class='fa fa-circle-info'></i>&nbsp;
+								{{ error }}
+							<button type="button" class="close" data-dismiss="alert" aria-label="Close">
+								<span aria-hidden="true">&times;</span>
+							</button>
+							</div>
+						{% endfor %}
+						{% endfor %}
+					{% endif %}
+
+					{% if success %}
+					<div class="alert alert-success alert-dismissible fade show" role="alert">
+						<i class='fa fa-circle-check'></i>&nbsp;Cluster saved
+						<button type="button" class="close" data-dismiss="alert" aria-label="Close">
+							<span aria-hidden="true">&times;</span>
+						</button>
+					</div>
+					{% endif %}
+
+						<div class="card-header">
+							<h5>
+								<i class="fas fa-circle-nodes"></i>
+								&nbsp;Add clusters
+							</h5>
+						</div>
+
+						<div class="card-body">
+							<div class="row">
+								<div class="col-sm-5">
+									<div class="input-group mb-3">
+										<div class="input-group-prepend">
+											<span class="input-group-text"><i class="fas fa-id-badge"></i></span>
+										</div>
+									<input type="text" name="cluster_name" id="cluster_name" class="form-control" placeholder="Cluster name" required>
+									<!-- Add clusters button -->
+									<div class="input-group-append">
+										<button type="button" class="btn add btn-primary" id="addRow"><i class="fas fa-plus"></i>
+											Add cluster
+										</button>
+									</div>
+									</div>
+								</div>
+							</div>
+
+							<div class="row">
+								<div class="col-sm-8">
+									<div id="newRow"></div>
+								</div>
+							</div><!-- row -->
+						</div><!-- card-body -->
+
+				<!-- Pulsante submit -->
+				<button type="submit" class="submit btn btn-primary btn-block" name="submit" id="submit" value="Submit">Save</button>
+			</form>
+		  </div><!-- card -->
+	  </div><!-- container-fluid -->
+
+	</section>
+</div><!-- content-wrapper -->
+
+<!-- fields validation -->
+<script>
+$(document).ready(function() {
+	// aggiunta campi dinamici
+	function addRow() {
+		const maxField = 50; //Input fields increment limitation
+		let x = 1; //Initial field counter is 1
+
+		x++; //Increment field counter
+
+		let html = '';
+		html += '<div id="inputFormRow">';
+		html += '<div class="input-group mb-3">';
+		html += '<div class="input-group-prepend"><span class="input-group-text"><i class="fas fa-id-badge"></i></span></div>';
+		html += '<input type="text" name="cluster_name' + x + '" class="form-control m-input" placeholder="Cluster name" autocomplete="off" required>';
+		html += '<div class="input-group-append">';
+		html += '<button id="removeRow" type="button" class="btn btn-danger">Remove</button>';
+		html += '</div>';
+		html += '</div>';
+
+		if(x < maxField){ 
+			$('#newRow').append(html);
+		}
+
+		// remove row
+		$(document).on('click', '#removeRow', function () {
+			x--; //Decrement field counter
+			$(this).closest('#inputFormRow').remove();
+		});
+	}
+
+	// on click add row
+	$("#addRow").on('click', addRow);
+
+});
+</script>
+{% endblock %}

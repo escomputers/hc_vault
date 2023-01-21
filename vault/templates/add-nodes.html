@@ -1,11 +1,6 @@
 {% extends "index.html" %}
 
 {% block content %}
-<style>
-  .button-container {
-    float: right;
-  }
-</style>
 <div class="content-wrapper">
 <!-- Content Header (Page header) -->
   <section class="content-header">
@@ -16,7 +11,7 @@
 						<ol class="breadcrumb">
 							<li class="breadcrumb-item"><a href="{% url 'dashboard' %}">Home</a></li>
 							<li class="breadcrumb-item"><a href="#">Settings</a></li>
-							<li class="breadcrumb-item active" aria-current="page">Clusters</li>
+							<li class="breadcrumb-item active" aria-current="page">Add nodes</li>
 						</ol>
 					</nav>
 				</div>
@@ -28,105 +23,70 @@
 	<section class="content">
 		<div class="container-fluid">
 
-			<div class="card"><!-- Clusters table -->
-				<div class="card-header">
-					<h5>
-						<i class="fas fa-circle-nodes"></i>
-						&nbsp;Clusters
-						<span class="badge badge-primary">{{ clusters_number }}</span>
-					</h5>
-					<!-- table buttons-->
-					<div id="button-container" class="button-container"></div>
-				</div>
-
-				<div class="card-body">
-					<table id="clusters" class="table table-bordered table-hover">
-						<thead>
-							<tr>
-							<th>Active clusters</th>
-							<th class="none">Nodes:</th>
-							<th class="none"></th>
-							<!--<th></th> for remove button-->
-							</tr>
-						</thead>
-
-						<tbody>
-							{% if clusters_data %}
-							{% for i in clusters_data %}
-							<tr>
-								<td>{{ i.cluster_name }}</td>
-								<td>{{ i.node1 }}</td>
-								<td>{{ i.node2 }}</td>
-								<!--
-									/**
-										*! INSERIRE 
-									*/
-								<td>
-									<span class="badge bg-danger"><font size="3.1em">Remove</font></span>
-								</td>
-								-->
-							</tr>
-							{% endfor %}
-						{% endif %}	
-						</tbody>
-
-					</table>
-
-				</div><!-- card body -->
-		  </div><!-- card -->
-
 		  <div class="card">
 				<form id="Form" action="" method="POST">
 					{% csrf_token %}
 
 					<!-- sezione per messaggi successo del form -->
+					{% if form.errors %}
+						{% for field in form %}
+						{% for error in field.errors %}
+						<div class="alert alert-danger alert-dismissible fade show" role="alert">
+							<i class='fa fa-circle-info'></i>&nbsp;
+								{{ error }}
+							<button type="button" class="close" data-dismiss="alert" aria-label="Close">
+								<span aria-hidden="true">&times;</span>
+							</button>
+							</div>
+						{% endfor %}
+						{% endfor %}
+					{% endif %}
+
 					{% if success %}
-					<div id="success">
-						<script>
-							Swal.fire({
-							icon: 'success',
-							title: 'Success:',
-							text: 'Cluster saved!',
-							confirmButtonColor: '#007bff',
-						})
-					</script>
+					<div class="alert alert-success alert-dismissible fade show" role="alert">
+						<i class='fa fa-circle-check'></i>&nbsp;Node saved
+						<button type="button" class="close" data-dismiss="alert" aria-label="Close">
+							<span aria-hidden="true">&times;</span>
+						</button>
 					</div>
 					{% endif %}
 
 						<div class="card-header">
 							<h5>
 								<i class="fas fa-server"></i>
-								&nbsp;Add cluster
+								&nbsp;Add nodes
 							</h5>
 						</div>
 
 						<div class="card-body">
 							<div class="row">
-								<div class="col-sm-5">
+								<div class="col-sm-8">
 									<div class="input-group mb-3">
 										<div class="input-group-prepend">
-											<span class="input-group-text"><i class="fas fa-id-badge"></i></span>
+											<span class="input-group-text"><i class="fas fa-circle-nodes"></i></span>
 										</div>
-									<input type="text" name="cluster_name" id="cluster_name" class="form-control" placeholder="Cluster name" required>
-									<!-- Add URLs button -->
-									<div class="input-group-append">
-										<button type="button" class="btn add btn-primary" id="addRow"><i class="fas fa-plus"></i>
-											Add node
-										</button>
-									</div>
+										<select id="clusters" name="clusters_data" class="form-control">
+											{% for i in clusters %}
+												<option value="{{ i.id }}">{{ i.cluster_name }}</option>
+											{% endfor %}
+										</select>
 									</div>
 								</div>
 							</div>
 
 							<div class="row">
 								<div class="col-sm-8">
-
 									<div id="inputFormRow">
 										<div class="input-group mb-3">
 											<div class="input-group-prepend">
 												<span class="input-group-text"><i class="fas fa-globe"></i></span>
 											</div>
-											<input type="text" name="node1" class="form-control m-input" placeholder="Vault URL" required>
+											<input type="url" name="url" class="form-control m-input" placeholder="Vault URL" required>
+											<div class="input-group-append">
+												<button type="button" class="btn add btn-primary" id="addRow"><i class="fas fa-plus"></i>
+												Add node
+												</button>
+											</div>
 										</div><!-- input-group mb-3 -->
 									</div><!-- inputFormRow -->
 		
@@ -147,61 +107,27 @@
 				<!-- Pulsante submit -->
 				<button type="submit" class="submit btn btn-primary btn-block" name="submit" id="submit" value="Submit">Save</button>
 			</form>
+
+			<!--
+				<div class="alert alert-danger" role="alert">
+					<i class='fa fa-circle-info'></i>&nbsp;
+						Add a cluster <a href="{% url 'add-clusters' %}">here</a> before adding nodes
+				</div>
+			-->
 		  </div><!-- card -->
 	  </div><!-- container-fluid -->
 
 	</section>
 </div><!-- content-wrapper -->
 
-<!-- datatable -->
-<script>
-$(function () {
-	let table = $('#clusters').DataTable({
-		dom: '<"button-container"B>lfrtip',
-		responsive: true,
-		ordering: false,
-		buttons: [
-			{
-				extend: 'copy',
-				text: '<i class="fas fa-copy"></i> Copy',
-				className: 'btn btn-light',
-				exportOptions: {
-					columns: ':visible'
-				}
-			},
-			{
-				extend: 'print',
-				text: '<i class="fas fa-print"></i> Print',
-				className: 'btn btn-light',
-				exportOptions: {
-					columns: ':visible'
-				}
-			},
-			{
-				extend: 'csv',
-				text: '<i class="fas fa-file-csv"></i> CSV',
-				className: 'btn btn-light',
-				exportOptions: {
-					columns: ':visible'
-				}
-			},
-			{
-				extend: 'pdf',
-				text: '<i class="fas fa-file-pdf"></i> PDF',
-				className: 'btn btn-light',
-				exportOptions: {
-					columns: ':visible'
-				}
-			}
-			]
-	});
-
-});
-</script>
-
 <!-- fields validation -->
 <script>
 $(document).ready(function() {
+	// initialize Select2
+	$('#clusters').select2({
+		theme: 'bootstrap4',
+	})
+
 	// initialize nodes array
 	let nodes = [];
 
@@ -274,15 +200,6 @@ $(document).ready(function() {
 		validClass: "font-weight-bold alert-light",
 		errorClass: "font-weight-bold alert-danger",
 		rules: {
-			cluster_name: {
-				required: true,
-				minlength: 2,
-				noSpace: true
-			},
-			node1: {
-				required: true,
-				url: true
-			}
 		},
 		errorPlacement: function(error, element) {
 			error.insertAfter(element.parent());
@@ -292,7 +209,7 @@ $(document).ready(function() {
 
 	$("#Form").on('submit', function(event) {
 		//* pass dynamic created fields to validation
-		$("input[name^='node']").each(function() {
+		$("input[name^='url']").each(function() {
 			$(this).rules("add", {
 				required: true,
 				url: true,
@@ -302,7 +219,7 @@ $(document).ready(function() {
 
 		if($("#Form").validate().form()) {
 				// add nodes fields to separate array
-				$("input[name^='node']").each(function() {
+				$("input[name^='url']").each(function() {
 					nodes.push($(this).val());
 				});
 
@@ -310,7 +227,6 @@ $(document).ready(function() {
 				obj.addElem(nodes);
 
 				sendNodes()
-				sendCluster()
 		} else {
 			// prevent default submit action
 			event.preventDefault();
@@ -318,76 +234,23 @@ $(document).ready(function() {
 
 	})
 
-	// get input fields values and make AJAX call
-	function sendCluster() {
-		$("#Form").submit(function (e) {
-
-			e.preventDefault();
-
-			$.ajax({
-				url: "{% url 'submit' %}",
-				type: "POST",
-				success: function(response){
-					$("#cluster_name").focus();
-				},
-				error: function(response){
-					alert(JSON.stringify(response));
-				}
-			})
+	function sendNodes() {
+		$.ajax({
+			url: "#",
+			type: "POST",
+			data : {
+			csrfmiddlewaretoken:$('input[name=csrfmiddlewaretoken]').val(),
+			data: JSON.stringify(obj),
+			},
+			success: function(response){
+				//alert(JSON.stringify(response));
+			},
+			error: function(response){
+				//alert(JSON.stringify(response));
+			}
 		})
 	}
 
-function sendNodes() {
-	$.ajax({
-		url: "{% url 'nodes' %}",
-		type: "POST",
-		data : {
-		csrfmiddlewaretoken:$('input[name=csrfmiddlewaretoken]').val(),
-		data: JSON.stringify(obj),
-		},
-		success: function(response){
-			//alert(JSON.stringify(response));
-		},
-		error: function(response){
-			//alert(JSON.stringify(response));
-		}
-	})
-}
-
-$("#cluster_name").focusout(function (e) {
-	e.preventDefault();
-
-	// get the cluster name
-	let cluster_name = $(this).val();
-
-	// AJAX GET request for cluster
-	$.ajax({
-		type: 'GET',
-		url: "{% url 'get-cluster' %}",
-		data: {"cluster_name": cluster_name},
-		success: function (response) {
-			// if value exists, alert the user
-			if(!response["valid"]){
-				// custom popup
-				Swal.fire({
-					icon: 'error',
-					title: 'Error:',
-					text: 'Cluster already exists!',
-					confirmButtonColor: '#007bff',
-				})
-
-				let ClusterName = $("#cluster_name");
-				ClusterName.val("")
-				ClusterName.focus()
-			}
-		},
-		error: function (response) {
-			// console.log(response)
-		}
-	})
-})
-
 });
-
 </script>
 {% endblock %}

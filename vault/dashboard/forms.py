@@ -1,6 +1,6 @@
 from django import forms
 from .models import Cluster, Node, Job
-from django.forms import ModelForm
+from django.forms import ModelForm, Select
 
 class ClusterForm(ModelForm):
 	class Meta:
@@ -10,4 +10,7 @@ class ClusterForm(ModelForm):
 class NodeForm(ModelForm):
 	class Meta:
 		model = Node
-		fields = '__all__'
+		fields = ['url', 'cluster']
+		widgets = {
+				'clusters_data': forms.Select(choices=[(i.id, i.cluster_name) for i in Cluster.objects.all()])
+		}

@@ -1,26 +1,9 @@
 from django.shortcuts import render
 from .models import Cluster, Node, Job
-from django.db import transaction
-import json
 from .forms import ClusterForm, NodeForm
-from django.http import JsonResponse
-from django.core import serializers
-
-
-def is_ajax(request):
-    return request.META.get('HTTP_X_REQUESTED_WITH') == 'XMLHttpRequest'
 
 
 def home(request):
-    try:
-        clusters = Cluster.objects.all()
-    except Cluster.DoesNotExist:
-        clusters = None
-
-    return render(request, 'home.html', context={'clusters': clusters})
-
-
-def clusters(request):
     try:
         clusters = Cluster.objects.all()
         clusters_number = len(clusters)
@@ -30,80 +13,38 @@ def clusters(request):
         clusters_number = 0
         clusters_data = None
 
+    return render(request, 'home.html', context={'clusters_number': clusters_number, 'clusters_data': clusters_data})
+
+
+def addClusters(request):
     # save data on successful submission
     if request.method == 'POST':
         cluster_form = ClusterForm(request.POST)
         if cluster_form.is_valid():
             cluster_form.save()
-            clusters = Cluster.objects.all()
-            clusters_number = len(clusters)
-
-        return render(request, 'clusters.html', context={'form': cluster_form, 'clusters_number': clusters_number, 'clusters_data': clusters_data, 'success': 'Cluster saved!'})
+            return render(request, 'add-clusters.html', context={'success': 'success'})
+        else:
+            return render(request, 'add-clusters.html', context={'form': cluster_form})
 
     # GET case
-    return render(request, 'clusters.html', context={'clusters_number': clusters_number, 'clusters_data': clusters_data})
+    return render(request, 'add-clusters.html')
 
 
-def getCluster(request):
-    # request should be ajax and method should be GET
-    if is_ajax(request=request) and request.method == "GET":
-        # get the cluster from the client side
-        cluster_name = request.GET.get("cluster_name", None)
-        # check for cluster existence in the database
-        if Cluster.objects.filter(cluster_name = cluster_name).exists():
-            # if cluster_name found return not valid new friend
-            return JsonResponse({"valid":False}, status = 200)
+def addNodes(request):
+    try:
+        clusters = Cluster.objects.all()
+    except Cluster.DoesNotExist:
+        clusters = None
+    
+    if request.method == "POST":
+        node_form = NodeForm(request.POST)
+        if node_form.is_valid():
+            node_form.save()
+            return render(request, 'add-nodes.html', context={'success': 'success'})
         else:
-            # if cluster is not found, then user can create a new cluster
-            return JsonResponse({"valid":True}, status = 200)
+            return render(request, 'add-nodes.html', context={'form': node_form})
 
-    # error handling
-    return JsonResponse({}, status = 400)
-
-
-def submit(request):
-    # request should be ajax and method should be POST.
-    if is_ajax(request=request) and request.method == "POST":
-        # get the form data
-        form = ClusterForm(request.POST)
-        # save data and after fetch the object in instance
-        if form.is_valid():
-            instance = form.save()
-            # serialize in new cluster object in json
-            ser_instance = serializers.serialize('json', [ instance, ])
-            # send to client side
-            return JsonResponse({"instance": ser_instance}, status=200)
-        else:
-            # some form errors occured
-            return JsonResponse({"error": form.errors}, status=400)
-
-    # some error occured
-    return JsonResponse({"error": ""}, status=400)
-
-
-def nodes(request):
-    # request should be ajax and method should be POST.
-    if is_ajax(request=request) and request.method == "POST":
-        # get the form data
-        form = NodeForm(request.POST)
-        '''
-        last_cluster = Cluster.objects.last()
-        # nodes = [Node(cluster=last_cluster, url=url) for url in urls]
-
-        # Use the `bulk_create` method to create all of the nodes in a single database query
-        with transaction.atomic():
-            Node.objects.bulk_create(nodes)
-        # save the data and after fetch the object in instance
-        '''
-        if form.is_valid():
-            form.save()
-            # send to client side
-            return render(request, 'clusters.html', context={'success': 'Node saved!'})
-        else:
-            # some form errors occured
-            return render(request, 'clusters.html', context={'error': 'Node already exists!'})
-
-        return render(request, 'clusters.html')
+    return render(request, 'add-nodes.html', context={'clusters': clusters})
 
 
 def alerts(request):
