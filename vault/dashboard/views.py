@@ -8,12 +8,14 @@ def home(request):
         clusters = Cluster.objects.all()
         clusters_number = len(clusters)
         clusters_data = clusters.values()
+        nodes = Node.objects.all()
     except Cluster.DoesNotExist:
         clusters = None
         clusters_number = 0
         clusters_data = None
+        nodes = None
 
-    return render(request, 'home.html', context={'clusters_number': clusters_number, 'clusters_data': clusters_data})
+    return render(request, 'home.html', context={'clusters_number': clusters_number, 'clusters_data': clusters_data, 'nodes': nodes})
 
 
 def addClusters(request):

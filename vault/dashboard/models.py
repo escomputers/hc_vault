@@ -15,7 +15,7 @@ class Cluster(models.Model):
 
 class Node(models.Model):
     url = models.URLField(blank=True, null=True, unique=True)
-    cluster = models.ForeignKey(Cluster, on_delete=models.CASCADE)
+    cluster = models.ForeignKey(Cluster, on_delete=models.CASCADE, related_name='nodes')
 
     def __str__(self):
         return str(self.cluster)

@@ -48,8 +48,12 @@
 							{% for i in clusters_data %}
 							<tr>
 								<td>{{ i.cluster_name }}</td>
-								<td>{{ i.node1 }}</td>
-								<td>{{ i.node2 }}</td>
+                <td>
+                  {% for node in nodes %}
+                  {{ node.url }}
+                {% endfor %}
+                </td>
+                <td></td>
 								<!--
 									/**
 										*! INSERIRE 
@@ -77,7 +81,7 @@
 				</div>
 
 				<div class="card-body">
-					<table id="report" class="table table-borderless table-hover">
+					<table id="last_report" class="table table-borderless table-hover">
 						<thead>
 							<tr>
                 <th>Cluster</th>
@@ -88,8 +92,8 @@
 							</tr>
 						</thead>
 
-						{% if clusters %}
-							{% for i in clusters %}
+						{% if clusters_data %}
+							{% for i in clusters_data %}
 						<tbody>
 							<tr>
 								<td>{{ i.cluster_name }}</td>
@@ -203,12 +207,49 @@ $(function () {
 </script>
 
 <script>
-$(document).ready(function () {
-	$("#report").DataTable({
-		"responsive": true,
-	});
-});
-</script>
+  $(function () {
+    let table = $('#last_report').DataTable({
+      dom: '<"button-container"B>lfrtip',
+      responsive: true,
+      ordering: false,
+      buttons: [
+        {
+          extend: 'copy',
+          text: '<i class="fas fa-copy"></i> Copy',
+          className: 'btn btn-light',
+          exportOptions: {
+            columns: ':visible'
+          }
+        },
+        {
+          extend: 'print',
+          text: '<i class="fas fa-print"></i> Print',
+          className: 'btn btn-light',
+          exportOptions: {
+            columns: ':visible'
+          }
+        },
+        {
+          extend: 'csv',
+          text: '<i class="fas fa-file-csv"></i> CSV',
+          className: 'btn btn-light',
+          exportOptions: {
+            columns: ':visible'
+          }
+        },
+        {
+          extend: 'pdf',
+          text: '<i class="fas fa-file-pdf"></i> PDF',
+          className: 'btn btn-light',
+          exportOptions: {
+            columns: ':visible'
+          }
+        }
+        ]
+    });
+  
+  });
+  </script>
 
 <!--TABELLA CON PERCENTUALI-->
 <!--
