@@ -110,8 +110,8 @@
 						</thead>
 
 						{% if clusters_data %}
-							{% for i in clusters_data %}
 						<tbody>
+              {% for i in clusters_data %}
 							<tr>
 								<td>{{ i.cluster_name }}</td>
 								<td>{{ i.entities_count }}</td>
@@ -124,8 +124,8 @@
                 </td>
 							</tr>
               {% endfor %}
-              {% endif %}	
 						</tbody>
+            {% endif %}	
 
 					</table>
 				</div><!-- card body -->
