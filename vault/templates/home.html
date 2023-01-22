@@ -12,6 +12,23 @@
     <div class="container-fluid">
       <div class="row mb-2">
         <div class="col-sm-6">
+          {% if empty_clusters %}
+          <script>
+            Swal.fire({
+              html:
+                'Some clusters have no associated node' +
+                ' and won\'t be scanned. </br>' +
+                'Add nodes <a href="{% url 'add-nodes' %}">here</a>' +
+                ' to fix this issue',
+              focusConfirm: false,
+              icon: 'warning',
+              showCloseButton: true,
+              showConfirmButton: false,
+              toast: true,
+              position: 'top-right'
+            })
+          </script>
+          {% endif %}
 				</div>
       </div>
     </div>
