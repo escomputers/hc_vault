@@ -1,0 +1,256 @@
+{% extends "index.html" %}
+
+{% block content %}
+<div class="content-wrapper">
+<!-- Content Header (Page header) -->
+  <section class="content-header">
+    <div class="container-fluid">
+      <div class="row mb-2">
+        <div class="col-sm-6">
+  		  	<nav aria-label="breadcrumb">
+						<ol class="breadcrumb">
+							<li class="breadcrumb-item"><a href="{% url 'dashboard' %}">Home</a></li>
+							<li class="breadcrumb-item"><a href="#">Settings</a></li>
+							<li class="breadcrumb-item active" aria-current="page">Add nodes</li>
+						</ol>
+					</nav>
+				</div>
+      </div>
+    </div>
+  </section>
+
+	<!-- Main content -->
+	<section class="content">
+		<div class="container-fluid">
+
+		  <div class="card">
+				<form id="Form" action="" method="POST">
+					{% csrf_token %}
+
+					<!-- sezione per messaggi successo del form -->
+					{% if form.errors %}
+						{% for field in form %}
+						{% for error in field.errors %}
+						<div class="alert alert-danger alert-dismissible fade show" role="alert">
+							<i class='fa fa-circle-info'></i>&nbsp;
+								{{ error }}
+							<button type="button" class="close" data-dismiss="alert" aria-label="Close">
+								<span aria-hidden="true">&times;</span>
+							</button>
+							</div>
+						{% endfor %}
+						{% endfor %}
+					{% endif %}
+
+					{% if success %}
+					<div class="alert alert-success alert-dismissible fade show" role="alert">
+						<i class='fa fa-circle-check'></i>&nbsp;Node saved
+						<button type="button" class="close" data-dismiss="alert" aria-label="Close">
+							<span aria-hidden="true">&times;</span>
+						</button>
+					</div>
+					{% endif %}
+
+						<div class="card-header">
+							<h5>
+								<i class="fas fa-server"></i>
+								&nbsp;Add nodes
+							</h5>
+						</div>
+
+						<div class="card-body">
+							<div class="row">
+								<div class="col-sm-8">
+									<div class="input-group mb-3">
+										<div class="input-group-prepend">
+											<span class="input-group-text"><i class="fas fa-circle-nodes"></i></span>
+										</div>
+										<select id="clusters" name="cluster" class="form-control" required>
+											{% for i in clusters %}
+												<option value="{{ i.id }}">{{ i.cluster_name }}</option>
+											{% endfor %}
+										</select>
+									</div>
+								</div>
+							</div>
+
+							<div class="row">
+								<div class="col-sm-8">
+									<div id="inputFormRow">
+										<div class="input-group mb-3">
+											<div class="input-group-prepend">
+												<span class="input-group-text"><i class="fas fa-globe"></i></span>
+											</div>
+											<input type="url" name="url" class="form-control m-input" placeholder="Vault URL" required>
+											<div class="input-group-append">
+												<button type="button" class="btn add btn-primary" id="addRow"><i class="fas fa-plus"></i>
+												Add node
+												</button>
+											</div>
+										</div><!-- input-group mb-3 -->
+									</div><!-- inputFormRow -->
+		
+									<div id="newRow"></div>
+
+								</div><!-- col-sm-8 -->
+							</div><!-- row -->
+						</div><!-- card-body -->
+
+				<!-- info -->
+				<div class="alert alert-light alert-dismissible fade show" role="alert">
+					<p style="color:black;"><i class='fa fa-circle-info'></i>&nbsp;Info: max 50 nodes per cluster</p>
+					<button type="button" class="close" data-dismiss="alert" aria-label="Close">
+						<span aria-hidden="true">&times;</span>
+					</button>
+				</div>
+
+				<!-- Pulsante submit -->
+				<button type="submit" class="submit btn btn-primary btn-block" name="submit" id="submit" value="Submit">Save</button>
+			</form>
+
+			<!--
+				<div class="alert alert-danger" role="alert">
+					<i class='fa fa-circle-info'></i>&nbsp;
+						Add a cluster <a href="{% url 'add-clusters' %}">here</a> before adding nodes
+				</div>
+			-->
+		  </div><!-- card -->
+	  </div><!-- container-fluid -->
+
+	</section>
+</div><!-- content-wrapper -->
+
+<!-- fields validation -->
+<script>
+$(document).ready(function() {
+	// initialize Select2
+	$('#clusters').select2({
+		theme: 'bootstrap4',
+	})
+
+	// initialize nodes array
+	let nodes = [];
+
+	// initialize object containing form data and function for add elements to it
+	let obj = {
+    length: 0,
+
+    addElem: function addElem(elem) {
+			// obj.length is automatically incremented 
+			// every time an element is added.
+			[].push.call(this, elem);
+    }
+	};
+
+	// add method for checking spaces
+	$.validator.addMethod("noSpace", function(value, element) { 
+		return value.indexOf(" ") < 0 && value != ""; 
+		}, "No spaces"
+	);
+
+	// duplicates custom validation
+	$.validator.addMethod("noDuplicateValues", function(value, element) {
+		const $inputs = $("input[name^='node']");
+		const valueCounts = {};
+		$inputs.each((i, el) => {
+			const val = el.value;
+			if (val in valueCounts) {
+				valueCounts[val] += 1;
+			} else {
+				valueCounts[val] = 1;
+			}
+		});
+		return Object.values(valueCounts).every(count => count === 1);
+	}, "Fields cannot be the same");
+	
+
+	// aggiunta campi dinamici
+	function addRow() {
+		const maxField = 50; //Input fields increment limitation
+		let x = 1; //Initial field counter is 1
+
+		x++; //Increment field counter
+
+		let html = '';
+		html += '<div id="inputFormRow">';
+		html += '<div class="input-group mb-3">';
+		html += '<div class="input-group-prepend"><span class="input-group-text"><i class="fas fa-globe"></i></span></div>';
+		html += '<input type="text" name="node' + x + '" class="form-control m-input" placeholder="Vault URL" autocomplete="off" required>';
+		html += '<div class="input-group-append">';
+		html += '<button id="removeRow" type="button" class="btn btn-danger">Remove</button>';
+		html += '</div>';
+		html += '</div>';
+
+		if(x < maxField){ 
+			$('#newRow').append(html);
+		}
+
+		// remove row
+		$(document).on('click', '#removeRow', function () {
+			x--; //Decrement field counter
+			$(this).closest('#inputFormRow').remove();
+		});
+	}
+
+	// on click add row
+	$("#addRow").on('click', addRow);
+
+	// initialize the validator
+	$("#Form").validate({
+		validClass: "font-weight-bold alert-light",
+		errorClass: "font-weight-bold alert-danger",
+		rules: {
+		},
+		errorPlacement: function(error, element) {
+			error.insertAfter(element.parent());
+		}
+
+	});
+
+	$("#Form").on('submit', function(event) {
+		//* pass dynamic created fields to validation
+		$("input[name^='url']").each(function() {
+			$(this).rules("add", {
+				required: true,
+				url: true,
+				noDuplicateValues: true
+			})
+		});
+
+		if($("#Form").validate().form()) {
+				// add nodes fields to separate array
+				$("input[name^='url']").each(function() {
+					nodes.push($(this).val());
+				});
+
+				// add nodes to form data array
+				obj.addElem(nodes);
+
+				sendNodes()
+		} else {
+			// prevent default submit action
+			event.preventDefault();
+		}
+
+	})
+
+	function sendNodes() {
+		$.ajax({
+			url: "#",
+			type: "POST",
+			data : {
+			csrfmiddlewaretoken:$('input[name=csrfmiddlewaretoken]').val(),
+			data: JSON.stringify(obj),
+			},
+			success: function(response){
+				//alert(JSON.stringify(response));
+			},
+			error: function(response){
+				//alert(JSON.stringify(response));
+			}
+		})
+	}
+
+});
+</script>
+{% endblock %}

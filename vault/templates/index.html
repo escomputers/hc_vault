@@ -31,13 +31,14 @@
 	<script src="{% static 'plugins/fontawesome/js/all.min.js' %}"></script>
   <link rel="stylesheet" href="{% static 'plugins/fontawesome/css/all.min.css' %}">
 
-  <!-- Sweet alert2 -->
-	<script src="{% static 'plugins/sweetalert2/js/sweetalert2.all.min.js' %}"></script>
-  <link rel="stylesheet" href="{% static 'plugins/sweetalert2/css/sweetalert2.min.css' %}">
-
   <!-- Jquery validation -->
   <script src="{% static 'plugins/jquery-validation/jquery.validate.min.js' %}"></script>
   <script src="{% static 'plugins/jquery-validation/additional-methods.min.js' %}"></script>
+
+  <!-- select2 -->
+  <link rel="stylesheet" type="text/css" href="{% static 'plugins/select2/css/select2.min.css' %}">
+  <link rel="stylesheet" href="{% static 'plugins/select2/css/select2-bootstrap4.min.css' %}">
+  <script src="{% static 'plugins/select2/js/select2.full.min.js' %}"></script>
 
   <!-- Datatables -->
   <script src="{% static 'plugins/datatables/js/jquery.dataTables.min.js' %}"></script>
@@ -113,9 +114,16 @@
           </a>
           <ul class="nav nav-treeview">
             <li class="nav-item">
-              <a href="{% url 'clusters' %}" class="nav-link">
+              <a href="{% url 'add-clusters' %}" class="nav-link">
+                <i class="fas fa-circle-nodes nav-icon"></i>
+                <p>Add Clusters</p>
+              </a>
+            </li>
+
+            <li class="nav-item">
+              <a href="{% url 'add-nodes' %}" class="nav-link">
                 <i class="fas fa-server nav-icon"></i>
-                <p>Clusters</p>
+                <p>Add Nodes</p>
               </a>
             </li>
 

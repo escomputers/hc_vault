@@ -6,9 +6,7 @@ from . import views
 
 urlpatterns = [
     path("", views.home, name="dashboard"),
-    path("get-cluster/", views.getCluster, name="get-cluster"),
-    path("submit/", views.submit, name="submit"),
-    path("nodes/", views.nodes, name="nodes"),
-    path("clusters/", views.clusters, name="clusters"),
+    path("add-clusters/", views.addClusters, name="add-clusters"),
+    path("add-nodes/", views.addNodes, name="add-nodes"),
     path("alerts/", views.alerts, name="alerts")
 ]

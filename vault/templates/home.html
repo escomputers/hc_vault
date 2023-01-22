@@ -1,6 +1,11 @@
 {% extends "index.html" %}
 
 {% block content %}
+<style>
+  .button-container {
+    float: right;
+  }
+</style>
 <div class="content-wrapper">
 <!-- Content Header (Page header) -->
   <section class="content-header">
@@ -15,6 +20,53 @@
 	<!-- Main content -->
 	<section class="content">
 		<div class="container-fluid">
+
+      <div class="card"><!-- Clusters table -->
+				<div class="card-header">
+					<h5>
+						<i class="fas fa-circle-nodes"></i>
+						&nbsp;Clusters
+						<span class="badge badge-primary">{{ clusters_number }}</span>
+					</h5>
+					<!-- table buttons-->
+					<div id="button-container" class="button-container"></div>
+				</div>
+
+				<div class="card-body">
+					<table id="clusters" class="table table-bordered table-hover">
+						<thead>
+							<tr>
+							<th>Active clusters</th>
+							<th class="none">Nodes:</th>
+							<th class="none"></th>
+							<!--<th></th> for remove button-->
+							</tr>
+						</thead>
+
+						<tbody>
+							{% if clusters_data %}
+							{% for i in clusters_data %}
+							<tr>
+								<td>{{ i.cluster_name }}</td>
+								<td>{{ i.node1 }}</td>
+								<td>{{ i.node2 }}</td>
+								<!--
+									/**
+										*! INSERIRE 
+									*/
+								<td>
+									<span class="badge bg-danger"><font size="3.1em">Remove</font></span>
+								</td>
+								-->
+							</tr>
+							{% endfor %}
+						{% endif %}	
+						</tbody>
+
+					</table>
+
+				</div><!-- card body -->
+		  </div><!-- card -->
 
 			<div class="card"><!-- Last report -->
 				<div class="card-header">
@@ -58,7 +110,7 @@
 				</div><!-- card body -->
 		  </div><!-- card -->
 
-		  <div class="card"><!-- second card -->
+		  <div class="card"><!-- Recap -->
         <div class="card-header">
           <h5>
             <i class="fas fa-circle-dot"></i>
@@ -105,6 +157,51 @@
 </div><!-- content-wrapper -->
 
 <!-- datatable -->
+<script>
+$(function () {
+  let table = $('#clusters').DataTable({
+    dom: '<"button-container"B>lfrtip',
+    responsive: true,
+    ordering: false,
+    buttons: [
+      {
+        extend: 'copy',
+        text: '<i class="fas fa-copy"></i> Copy',
+        className: 'btn btn-light',
+        exportOptions: {
+          columns: ':visible'
+        }
+      },
+      {
+        extend: 'print',
+        text: '<i class="fas fa-print"></i> Print',
+        className: 'btn btn-light',
+        exportOptions: {
+          columns: ':visible'
+        }
+      },
+      {
+        extend: 'csv',
+        text: '<i class="fas fa-file-csv"></i> CSV',
+        className: 'btn btn-light',
+        exportOptions: {
+          columns: ':visible'
+        }
+      },
+      {
+        extend: 'pdf',
+        text: '<i class="fas fa-file-pdf"></i> PDF',
+        className: 'btn btn-light',
+        exportOptions: {
+          columns: ':visible'
+        }
+      }
+      ]
+  });
+
+});
+</script>
+
 <script>
 $(document).ready(function () {
 	$("#report").DataTable({
