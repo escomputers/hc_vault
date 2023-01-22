@@ -65,10 +65,12 @@
 							{% for i in clusters_data %}
 							<tr>
 								<td>{{ i.cluster_name }}</td>
-                <td>
-                  {% for node in nodes %}
-                  {{ node.url }}
-                {% endfor %}
+                  <td>
+                    {% for item in cluster_urls %}
+                      {% if item.cluster_id == i.id %}
+                        </br>{{ item.url }}
+                      {% endif %}
+                    {% endfor %}
                 </td>
                 <td></td>
 								<!--

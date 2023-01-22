@@ -8,8 +8,8 @@ def home(request):
         clusters = Cluster.objects.all()
         clusters_number = len(clusters)
         clusters_data = clusters.values()
-        nodes = Node.objects.all()
         empty_clusters = []
+        cluster_urls = Node.objects.filter(cluster__isnull=False)
         for i in clusters_data:
             clusters_ids = i.get('id')
             cluster_nodes = Node.objects.filter(cluster=clusters_ids)
@@ -19,10 +19,10 @@ def home(request):
         clusters = None
         clusters_number = 0
         clusters_data = None
-        nodes = None
         empty_clusters = None
+        cluster_urls = None
 
-    return render(request, 'home.html', context={'clusters_number': clusters_number, 'clusters_data': clusters_data, 'empty_clusters': empty_clusters, 'nodes': nodes})
+    return render(request, 'home.html', context={'clusters_number': clusters_number, 'clusters_data': clusters_data, 'empty_clusters': empty_clusters, 'cluster_urls': cluster_urls})
 
 
 def addClusters(request):
