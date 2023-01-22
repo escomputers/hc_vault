@@ -35,16 +35,16 @@ def addNodes(request):
         clusters = Cluster.objects.all()
     except Cluster.DoesNotExist:
         clusters = None
-    
+
+    node_form = NodeForm(request.POST or None)
     if request.method == "POST":
-        node_form = NodeForm(request.POST)
         if node_form.is_valid():
             node_form.save()
-            return render(request, 'add-nodes.html', context={'success': 'success'})
+            return render(request, 'add-nodes.html', context={'form': node_form, 'success': 'success', 'clusters': clusters})
         else:
-            return render(request, 'add-nodes.html', context={'form': node_form})
+            return render(request, 'add-nodes.html', context={'form': node_form, 'clusters': clusters})
 
-    return render(request, 'add-nodes.html', context={'clusters': clusters})
+    return render(request, 'add-nodes.html', context={'form': node_form, 'clusters': clusters})
 
 
 def alerts(request):
