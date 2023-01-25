@@ -24,69 +24,78 @@
 		<div class="container-fluid">
 
 		  <div class="card">
-				<form id="Form" action="" method="POST">
-					{% csrf_token %}
-
-					<!-- sezione per messaggi successo del form -->
-					{% if form.errors %}
-						{% for field in form %}
-						{% for error in field.errors %}
-						<div class="alert alert-danger alert-dismissible fade show" role="alert">
-							<i class='fa fa-circle-info'></i>&nbsp;
-								{{ error }}
-							<button type="button" class="close" data-dismiss="alert" aria-label="Close">
-								<span aria-hidden="true">&times;</span>
-							</button>
-							</div>
-						{% endfor %}
-						{% endfor %}
-					{% endif %}
-
-					{% if success %}
-					<div class="alert alert-success alert-dismissible fade show" role="alert">
-						<i class='fa fa-circle-check'></i>&nbsp;Cluster saved
+				<!-- sezione per messaggi successo del form -->
+				{% if form.errors %}
+					{% for field in form %}
+					{% for error in field.errors %}
+					<div class="alert alert-danger alert-dismissible fade show" role="alert">
+						<i class='fa fa-circle-info'></i>&nbsp;
+							{{ error }}
 						<button type="button" class="close" data-dismiss="alert" aria-label="Close">
 							<span aria-hidden="true">&times;</span>
 						</button>
-					</div>
-					{% endif %}
-
-						<div class="card-header">
-							<h5>
-								<i class="fas fa-circle-nodes"></i>
-								&nbsp;Add clusters
-							</h5>
 						</div>
+					{% endfor %}
+					{% endfor %}
+				{% endif %}
 
-						<div class="card-body">
-							<div class="row">
-								<div class="col-sm-5">
-									<div class="input-group mb-3">
-										<div class="input-group-prepend">
-											<span class="input-group-text"><i class="fas fa-id-badge"></i></span>
-										</div>
-									<input type="text" name="cluster_name" id="cluster_name" class="form-control" placeholder="Cluster name" required>
-									<!-- Add clusters button -->
-									<div class="input-group-append">
-										<button type="button" class="btn add btn-primary" id="addRow"><i class="fas fa-plus"></i>
-											Add cluster
-										</button>
+				{% if success %}
+				<div class="alert alert-success alert-dismissible fade show" role="alert">
+					<i class='fa fa-circle-check'></i>&nbsp;Cluster saved
+					<button type="button" class="close" data-dismiss="alert" aria-label="Close">
+						<span aria-hidden="true">&times;</span>
+					</button>
+				</div>
+				{% endif %}
+
+				<div class="card-header">
+					<h5>
+						<i class="fas fa-circle-nodes"></i>
+						&nbsp;Add clusters
+					</h5>
+				</div>
+
+				<div class="card-body">
+					<form action="" method="POST">
+					{% csrf_token %}
+					<!--<input type="hidden" id="id_TOTAL_FORMS" value="1" name="TOTAL_FORMS">
+					<input type="hidden" id="id_INITIAL_FORMS" value="1" name="INITIAL_FORMS">.
+					<input type="hidden" id="id_MAX_NUM_FORMS" name="MAX_NUM_FORMS">-->
+					{{ form.management_form }}
+					{% for item in form %}
+						<div class="row">
+							<div class="col-sm-8">
+								<div class="input-group mb-3">
+									<div class="input-group-prepend">
+										<span class="input-group-text"><i class="fas fa-id-badge"></i></span>
 									</div>
-									</div>
+								{{ item.cluster_name}}
+								<!--<input type="text" name="form-{{ forloop.counter0 }}-cluster_name" id="id_form-{{ forloop.counter0 }}-cluster_name" class="form-control" placeholder="Cluster name" required>-->
+								<!-- Add clusters button -->
+								<div class="input-group-append">
+									<button type="button" class="btn add btn-primary" id="addRow"><i class="fas fa-plus"></i>
+										Add cluster
+									</button>
+								</div>
 								</div>
 							</div>
+						</div>
 
-							<div class="row">
-								<div class="col-sm-8">
-									<div id="newRow"></div>
-								</div>
-							</div><!-- row -->
-						</div><!-- card-body -->
+						<div class="row">
+							<div class="col-sm-8">
+								<div id="newRow"></div>
+							</div>
+						</div><!-- row -->
+						{% endfor %}
 
-				<!-- Pulsante submit -->
-				<button type="submit" class="submit btn btn-primary btn-block" name="submit" id="submit" value="Submit">Save</button>
-			</form>
-		  </div><!-- card -->
+						<!-- Pulsante submit -->
+						<button type="submit" class="submit btn btn-primary btn-block" name="submit" id="submit" value="Submit">Save</button>
+					</form>
+					<div id="empty-form" style="display:none;">
+						{{ form.empty_form.cluster_name }}
+					</div>
+				</div><!-- card-body -->
+			</div><!-- card -->
 	  </div><!-- container-fluid -->
 
 	</section>
@@ -95,10 +104,14 @@
 <!-- fields validation -->
 <script>
 $(document).ready(function() {
+	const inputs = $("input[name^='form']:not([name^='form0'])");
+	//inputs.hide()
+
+	let x = 0; //Initial field counter
+
 	// aggiunta campi dinamici
 	function addRow() {
 		const maxField = 50; //Input fields increment limitation
-		let x = 1; //Initial field counter is 1
 
 		x++; //Increment field counter
 
@@ -106,7 +119,8 @@ $(document).ready(function() {
 		html += '<div id="inputFormRow">';
 		html += '<div class="input-group mb-3">';
 		html += '<div class="input-group-prepend"><span class="input-group-text"><i class="fas fa-id-badge"></i></span></div>';
-		html += '<input type="text" name="cluster_name' + x + '" class="form-control m-input" placeholder="Cluster name" autocomplete="off" required>';
+		//html += '<input type="text" name="form-' + x + '-cluster_name" id="id_form-' + x + '-cluster_name" class="form-control m-input" placeholder="Cluster name" autocomplete="off" required>';
+		html += '<input type="text" name="form-{{ forloop.counter }}-cluster_name" id="id_form-{{ forloop.counter }}-cluster_name" class="form-control m-input" placeholder="Cluster name" autocomplete="off" required>';
 		html += '<div class="input-group-append">';
 		html += '<button id="removeRow" type="button" class="btn btn-danger">Remove</button>';
 		html += '</div>';
@@ -123,8 +137,15 @@ $(document).ready(function() {
 		});
 	}
 
+	function addFormSets() {
+		index = parseInt($('#id_form-TOTAL_FORMS').val());
+		let newForm = $('#empty-form').html().replace(/__prefix__/g, index);
+		$('#id_form-TOTAL_FORMS').val(index + 1);
+		$('#newRow').append(newForm);
+	}
+
 	// on click add row
-	$("#addRow").on('click', addRow);
+	$("#addRow").on('click', addFormSets);
 
 });
 </script>

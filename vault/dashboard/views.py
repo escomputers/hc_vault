@@ -1,6 +1,6 @@
 from django.shortcuts import render
 from .models import Cluster, Node, Job
-from .forms import ClusterForm, NodeForm
+from .forms import ClusterFormSet, NodeForm
 
 
 def home(request):
@@ -26,14 +26,18 @@ def home(request):
 
 
 def addClusters(request):
+    cluster_form = ClusterFormSet()
     # save data on successful submission
     if request.method == 'POST':
-        cluster_form = ClusterForm(request.POST)
+        cluster_form = ClusterFormSet(request.POST)
         if cluster_form.is_valid():
-            cluster_form.save()
+            for item in cluster_form:
+                item.save()
             return render(request, 'add-clusters.html', context={'success': 'success'})
         else:
             return render(request, 'add-clusters.html', context={'form': cluster_form})
+
+    return render(request, 'add-clusters.html', context={'form': cluster_form})
 
     # GET case
     return render(request, 'add-clusters.html')
