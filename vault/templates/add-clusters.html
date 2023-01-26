@@ -115,52 +115,46 @@
 <!-- fields validation -->
 <script>
 $(document).ready(function() {
-	//const inputs = $("input[name^='form']:not([name^='form0'])");
-	let x = 0; //Initial field counter
-
-	// aggiunta campi dinamici
-	function addRow() {
-		const maxField = 50; //Input fields increment limitation
-
-		x++; //Increment field counter
-
-		let html = '';
-		html += '<div id="inputFormRow">';
-		html += '<div class="input-group mb-3">';
-		html += '<div class="input-group-prepend"><span class="input-group-text"><i class="fas fa-id-badge"></i></span></div>';
-		//html += '<input type="text" name="form-' + x + '-cluster_name" id="id_form-' + x + '-cluster_name" class="form-control m-input" placeholder="Cluster name" autocomplete="off" required>';
-		html += '<input type="text" name="form-{{ forloop.counter }}-cluster_name" id="id_form-{{ forloop.counter }}-cluster_name" class="form-control m-input" placeholder="Cluster name" autocomplete="off" required>';
-		html += '<div class="input-group-append">';
-		html += '<button id="removeRow" type="button" class="btn btn-danger">Remove</button>';
-		html += '</div>';
-		html += '</div>';
-
-		if(x < maxField){ 
-			$('#newRow').append(html);
-		}
-
-		// remove row
-		$(document).on('click', '#removeRow', function () {
-			x--; //Decrement field counter
-			$(this).closest('#inputFormRow').remove();
-		});
-	}
-
 	function addFormSets() {
-		index = parseInt($('#id_form-TOTAL_FORMS').val());
+		let index = parseInt($('#id_form-TOTAL_FORMS').val());
 		let newForm = $('#empty-form').html().replace(/__prefix__/g, index);
 		$('#id_form-TOTAL_FORMS').val(index + 1);
 		$('#newRow').append(newForm);
-
-		// remove row
-		$(document).on('click', '#removeRow', function () {
-			$(this).closest('#inputFormRow').remove();
-      $('#id_form-TOTAL_FORMS').val(index - 1);
-		});
 	}
-
 	// on click add row
 	$("#addRow").on('click', addFormSets);
+
+	// remove row
+	$(document).on('click', '#removeRow', function () {
+		// get total forms index
+		let index = parseInt($('#id_form-TOTAL_FORMS').val());
+		// if index is not 0, decrement index (in order to avoid negative values)
+		if(index > 0) {
+			$('#id_form-TOTAL_FORMS').val(index - 1); // decrement Django total forms index
+			index--; // decrement our counter
+			// get informations about the element removed by the user
+			const elementsToBeRenamed_count = ($(this).closest('#inputFormRow').nextAll()).length
+			if(elementsToBeRenamed_count > 0) { // if the removed element was not the last
+				$(this).closest('#inputFormRow').nextAll().remove() // remove all the next elements after the removed element
+				// get the ID attribute of the removed element
+				const removedId = ($(this).closest('#inputFormRow').children().children()).filter('input').attr('id');
+				// extract only the numeric part of the result
+				const numericPart = removedId.match(/\d+/);
+				const removedIndex = parseInt(numericPart[0]) // convert string to number
+				$(this).closest('#inputFormRow').remove() // removed the clicked element
+				// iterate over the count
+				for(let i = 0; i < elementsToBeRenamed_count; i++){
+					// on each iteration, replace the prefix in 'name' and 'id' attributes inside the empty HTML form 
+					// with the current iteration number starting from the removedIndex number.
+					let newForm = $('#empty-form').html().replace(/__prefix__/g, removedIndex + i);
+					$('#newRow').append(newForm);
+				}
+			} else {
+				// if the removed element was the last
+				$(this).closest('#inputFormRow').remove()
+			}
+		}
+	});
 
 });
 </script>
