@@ -33,11 +33,11 @@ def addClusters(request):
         if cluster_form.is_valid():
             for item in cluster_form:
                 item.save()
-            return render(request, 'add-clusters.html', context={'form': ClusterFormSet(), 'success': 'success'})
+            return render(request, 'add-clusters.html', context={'formset': ClusterFormSet(), 'success': 'success'})
         else:
-            return render(request, 'add-clusters.html', context={'form': cluster_form})
+            return render(request, 'add-clusters.html', context={'formset': cluster_form})
 
-    return render(request, 'add-clusters.html', context={'form': cluster_form})
+    return render(request, 'add-clusters.html', context={'formset': cluster_form})
 
 
 def addNodes(request):

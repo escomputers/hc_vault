@@ -24,20 +24,21 @@
 		<div class="container-fluid">
 
 		  <div class="card">
-				<!-- sezione per messaggi successo del form -->
-				{% if form.errors %}
+				<!-- sezione per messaggi successo del formset -->
+				{% for form in formset %}
 					{% for field in form %}
-					{% for error in field.errors %}
-					<div class="alert alert-danger alert-dismissible fade show" role="alert">
-						<i class='fa fa-circle-info'></i>&nbsp;
-							{{ error }}
-						<button type="button" class="close" data-dismiss="alert" aria-label="Close">
-							<span aria-hidden="true">&times;</span>
-						</button>
+						{% for error in field.errors %}
+						<div class="alert alert-danger alert-dismissible fade show" role="alert">
+							<i class='fa fa-circle-info'></i>&nbsp;
+							<b>{{ field.value }}</b>
+							&nbsp;{{ error }}
+							<button type="button" class="close" data-dismiss="alert" aria-label="Close">
+								<span aria-hidden="true">&times;</span>
+							</button>
 						</div>
+						{% endfor %}
 					{% endfor %}
-					{% endfor %}
-				{% endif %}
+				{% endfor %}
 
 				{% if success %}
 				<div class="alert alert-success alert-dismissible fade show" role="alert">
@@ -58,8 +59,8 @@
 				<div class="card-body">
 					<form action="" method="POST">
 					{% csrf_token %}
-					{{ form.management_form }}
-					{% for item in form %}
+					{{ formset.management_form }}
+					{% for item in formset %}
 						<div class="row">
 							<div class="col-sm-8">
 								<div class="input-group mb-3">
@@ -95,7 +96,7 @@
 								<div class="input-group-prepend">
 									<span class="input-group-text"><i class="fas fa-id-badge"></i></span>
 								</div>
-								{{ form.empty_form.cluster_name }}
+								{{ formset.empty_form.cluster_name }}
 								<div class="input-group-append">
 									<button id="removeRow" type="button" class="btn btn-danger">
 										Remove
@@ -112,7 +113,6 @@
 	</section>
 </div><!-- content-wrapper -->
 
-<!-- fields validation -->
 <script>
 $(document).ready(function() {
 	function addFormSets() {
