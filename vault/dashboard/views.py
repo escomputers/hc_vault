@@ -1,13 +1,12 @@
 from django.shortcuts import render
 from .models import Cluster, Node, Job
-from .forms import ClusterFormSet, NodeForm
+from .forms import ClusterFormSet, NodeFormSet
 
 
 def home(request):
     try:
-        clusters = Cluster.objects.all()
-        clusters_number = len(clusters)
-        clusters_data = clusters.values()
+        clusters_number = len(Cluster.objects.all())
+        clusters_data = Cluster.objects.all().values()
         empty_clusters = []
         cluster_urls = Node.objects.filter(cluster__isnull=False)
         for i in clusters_data:
@@ -16,7 +15,6 @@ def home(request):
             if not cluster_nodes.exists():
                 empty_clusters.append(i.get('cluster_name'))
     except Cluster.DoesNotExist:
-        clusters = None
         clusters_number = 0
         clusters_data = None
         empty_clusters = None
@@ -42,8 +40,7 @@ def addClusters(request):
 
 def addNodes(request):
     try:
-        clusters = Cluster.objects.all()
-        clusters_data = clusters.values()
+        clusters_data = Cluster.objects.all().values()
         empty_clusters = []
         for i in clusters_data:
             clusters_ids = i.get('id')
@@ -51,19 +48,19 @@ def addNodes(request):
             if not cluster_nodes.exists():
                 empty_clusters.append(i.get('cluster_name'))
     except Cluster.DoesNotExist:
-        clusters = None
-        clusters_data = None
         empty_clusters = None
 
-    node_form = NodeForm(request.POST or None)
+    node_form = NodeFormSet()
     if request.method == "POST":
+        node_form = NodeFormSet(request.POST)
         if node_form.is_valid():
-            node_form.save()
-            return render(request, 'add-nodes.html', context={'form': node_form, 'success': 'success', 'clusters': clusters})
+            for item in node_form:
+                item.save()
+            return render(request, 'add-nodes.html', context={'formset': NodeFormSet(), 'success': 'success', 'clusters': clusters})
         else:
-            return render(request, 'add-nodes.html', context={'form': node_form, 'clusters': clusters})
+            return render(request, 'add-nodes.html', context={'formset': node_form, 'clusters': clusters})
 
-    return render(request, 'add-nodes.html', context={'form': node_form, 'clusters': clusters, 'empty_clusters': empty_clusters,})
+    return render(request, 'add-nodes.html', context={'formset': node_form, 'empty_clusters': empty_clusters})
 
 
 def addAlerts(request):
