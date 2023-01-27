@@ -68,7 +68,9 @@
                   <td>
                     {% for item in cluster_urls %}
                       {% if item.cluster_id == i.id %}
-                        </br>{{ item.url }}
+                        </br><span class="input-group-text"><i class="fas fa-link"></i>
+                          &nbsp;<a href="{{ item.url }}" target="_blank">{{ item.url }}</a>
+                        </span>
                       {% endif %}
                     {% endfor %}
                 </td>
