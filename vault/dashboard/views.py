@@ -39,9 +39,6 @@ def addClusters(request):
 
     return render(request, 'add-clusters.html', context={'form': cluster_form})
 
-    # GET case
-    return render(request, 'add-clusters.html')
-
 
 def addNodes(request):
     try:
@@ -69,5 +66,5 @@ def addNodes(request):
     return render(request, 'add-nodes.html', context={'form': node_form, 'clusters': clusters, 'empty_clusters': empty_clusters,})
 
 
-def alerts(request):
-    return render(request, 'alerts.html')
+def addAlerts(request):
+    return render(request, 'add-alerts.html')

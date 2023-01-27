@@ -8,5 +8,5 @@ urlpatterns = [
     path("", views.home, name="dashboard"),
     path("add-clusters/", views.addClusters, name="add-clusters"),
     path("add-nodes/", views.addNodes, name="add-nodes"),
-    path("alerts/", views.alerts, name="alerts")
+    path("add-alerts/", views.addAlerts, name="add-alerts")
 ]
