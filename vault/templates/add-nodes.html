@@ -16,7 +16,16 @@
 					</nav>
 				</div>
 			</div>
-			{% if empty_clusters %}
+		{% if not clusters %}
+			<div class="alert alert-danger" role="alert">
+				<i class='fa fa-circle-info'></i>&nbsp;
+					Add a cluster <a href="{% url 'add-clusters' %}">here</a> before adding nodes
+			</div>
+		</div><!-- container-fluid -->
+	</section>
+	{% else %}<!-- if clusters are present -->
+
+			{% if empty_clusters %}<!-- if clusters got no associated node/url -->
 			<div class="row">
 				<div class="col-sm">
 					<div class="alert alert-light alert-dismissible fade show" role="alert">
@@ -150,6 +159,8 @@
 	  </div><!-- container-fluid -->
 
 	</section>
+
+	{% endif %}<!-- endif statement when no cluster is present -->
 </div><!-- content-wrapper -->
 
 <script>
