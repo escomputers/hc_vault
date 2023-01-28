@@ -85,9 +85,6 @@
 					<div class="card-body">
 						<form id="Form" action="" method="POST">
 							{% csrf_token %}
-							{{ formset.management_form }}
-							{% for item in formset %}
-		
 								<div class="row">
 									<div class="col-sm-8">
 										<div class="input-group mb-3">
@@ -95,11 +92,17 @@
 												<span class="input-group-text"><i class="fas fa-circle-nodes"></i>
 												</span>
 											</div>
-											{{ item.cluster}}
+											<select id="clusters" name="cluster" class="form-control" required>
+												{% for i in clusters %}
+													<option value="{{ i.id }}">{{ i.cluster_name }}</option>
+												{% endfor %}
+											</select>
 										</div>
 									</div>
 								</div>
 
+								{{ formset.management_form }}
+								{% for item in formset %}
 								<div class="row">
 									<div class="col-sm-8">
 										<div id="inputFormRow">
@@ -152,7 +155,7 @@
 <script>
 $(document).ready(function() {
 	// initialize Select2
-	$('#id_form-0-cluster').select2({
+	$('#clusters').select2({
 		theme: 'bootstrap4',
 	})
 

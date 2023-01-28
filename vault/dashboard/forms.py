@@ -12,8 +12,8 @@ ClusterFormSet = formset_factory(ClusterForm, extra=1)
 
 class NodeForm(ModelForm):
     url = forms.URLField(widget=forms.URLInput(attrs={'class': 'form-control', 'required': 'required'}), error_messages={'invalid': 'is not a valid URL'})
-    cluster = forms.ModelChoiceField(queryset=Cluster.objects.all(), widget=forms.Select(attrs={'class': 'form-control', 'required': 'required'}),  empty_label="Select a cluster")
+    # cluster = forms.ModelChoiceField(queryset=Cluster.objects.all(), widget=forms.Select(attrs={'class': 'form-control', 'required': 'required'}),  empty_label="Select a cluster")
     class Meta:
         model = Node
-        fields = ['url', 'cluster']
+        fields = ['url']
 NodeFormSet = formset_factory(NodeForm, extra=1)
