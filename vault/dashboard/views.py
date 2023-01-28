@@ -40,7 +40,8 @@ def addClusters(request):
 
 def addNodes(request):
     try:
-        clusters_data = Cluster.objects.all().values()
+        clusters = Cluster.objects.all()
+        clusters_data = clusters.values()
         empty_clusters = []
         for i in clusters_data:
             clusters_ids = i.get('id')
@@ -48,19 +49,25 @@ def addNodes(request):
             if not cluster_nodes.exists():
                 empty_clusters.append(i.get('cluster_name'))
     except Cluster.DoesNotExist:
+        clusters = None
+        clusters_data = None
         empty_clusters = None
 
     node_form = NodeFormSet()
     if request.method == "POST":
+        cluster_id = request.POST.get('cluster')
+        cluster = Cluster.objects.get(id=cluster_id)
         node_form = NodeFormSet(request.POST)
         if node_form.is_valid():
             for item in node_form:
-                item.save()
+                node = item.save(commit=False)
+                node.cluster = cluster
+                node.save()
             return render(request, 'add-nodes.html', context={'formset': NodeFormSet(), 'success': 'success', 'clusters': clusters})
         else:
             return render(request, 'add-nodes.html', context={'formset': node_form, 'clusters': clusters})
 
-    return render(request, 'add-nodes.html', context={'formset': node_form, 'empty_clusters': empty_clusters})
+    return render(request, 'add-nodes.html', context={'formset': node_form, 'clusters': clusters, 'empty_clusters': empty_clusters})
 
 
 def addAlerts(request):
