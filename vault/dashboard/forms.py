@@ -1,5 +1,5 @@
-from .models import Cluster, Node, Job
-from django.forms import ModelForm, formset_factory, TextInput, URLInput, Select, ModelChoiceField
+from .models import Cluster, Node, Alert
+from django.forms import ModelForm, formset_factory, TextInput, URLInput, Select, EmailInput
 from django import forms
 
 class ClusterForm(ModelForm):
@@ -17,3 +17,15 @@ class NodeForm(ModelForm):
         model = Node
         fields = ['url']
 NodeFormSet = formset_factory(NodeForm, extra=1)
+
+class AlertForm(ModelForm):
+    class Meta:
+        model = Alert
+        fields = '__all__'
+
+class EmailForm(ModelForm):
+    email = forms.EmailField(widget=forms.EmailInput(attrs={'class': 'form-control', 'required': 'required'}))
+    class Meta:
+        model = Alert
+        fields = ['email']
+EmailFormSet = formset_factory(EmailForm, extra=1)
