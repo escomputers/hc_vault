@@ -1,11 +1,9 @@
-from django.shortcuts import reverse
 from django.test import RequestFactory, TestCase
 from .models import Cluster, Node, Alert
-from .forms import ClusterFormSet, NodeFormSet, EmailFormSet, AlertForm
-from .views import home, addClusters
+from .views import addClusters, addNodes
+from django.test import Client
 
-
-class ViewsTestCase(TestCase):
+class HomeViewTest(TestCase):
     def setUp(self):
         # Create a couple of clusters
         self.cluster_1 = Cluster.objects.create(cluster_name="cluster 1")
@@ -19,11 +17,10 @@ class ViewsTestCase(TestCase):
         self.factory = RequestFactory()
 
     def test_home_view(self):
-        # Create a request
-        request = self.factory.get(reverse('dashboard'))
+        # Create a request simulating a client request
+        client = Client()
 
-        # Use the request to get the response from the home view
-        response = home(request)
+        response = client.get('')
 
         # Check that the response has a status code of 200
         self.assertEqual(response.status_code, 200)
@@ -34,25 +31,77 @@ class ViewsTestCase(TestCase):
         self.assertEqual(len(response.context['cluster_urls']), 2)
         self.assertEqual(response.context['clusters_number'], 2)
 
-    def test_addClusters_view(self):
-        # Create a request with POST data
-        request = self.factory.post(reverse('add-clusters'), data={
-            'cluster_set-TOTAL_FORMS': 1,
-            'cluster_set-INITIAL_FORMS': 0,
-            'cluster_set-MIN_NUM_FORMS': 0,
-            'cluster_set-MAX_NUM_FORMS': 1000,
-            'cluster_set-0-cluster_name': 'cluster 3',
+
+class AddClustersViewTest(TestCase):
+    def setUp(self):
+        self.factory = RequestFactory()
+
+    def test_add_clusters_view_post_request(self):
+        # Simulate a successful POST request to the view
+        request = self.factory.post('/add-clusters/', data={
+            'form-TOTAL_FORMS': '3', 'form-INITIAL_FORMS': '0', 
+            'form-0-cluster_name': 'cluster_1', 
+            'form-1-cluster_name': 'cluster_2', 
+            'form-2-cluster_name': 'cluster_3'
         })
 
-        # Use the request to get the response from the addClusters view
         response = addClusters(request)
 
-        # Check that the response has a status code of 200
+        # Check if the response has a status code of 200 (success)
         self.assertEqual(response.status_code, 200)
 
-        # Check that the cluster was created
+        # Check if clusters were added
         self.assertEqual(Cluster.objects.count(), 3)
-        self.assertEqual(Cluster.objects.get(cluster_name="cluster 3").cluster_name, "cluster 3")
 
-        # Check that the form was passed to the template
-        self.assertIsInstance(response.context['formset'], ClusterFormSet)
+        # Check if the response contains the success message
+        self.assertContains(response, 'success')
+
+    def test_add_clusters_view_get_request(self):
+        # Simulate a GET request to the view
+        request = self.factory.get('/add-clusters/')
+        response = addClusters(request)
+
+        # Check if the response has a status code of 200 (success)
+        self.assertEqual(response.status_code, 200)
+
+        # Check if the response contains the formset in the context
+        self.assertContains(response, 'formset')
+
+
+class AddNodesTest(TestCase):
+    def setUp(self):
+        # create some clusters
+        self.cluster1 = Cluster.objects.create(cluster_name='Cluster1')
+        self.cluster2 = Cluster.objects.create(cluster_name='Cluster 2')
+        
+        # request factory
+        self.factory = RequestFactory()
+
+    def test_add_nodes_view_post_request(self):
+        # send a post request with valid form data
+        request = self.factory.post('/add-nodes/', data={
+            'cluster': self.cluster1.id,
+            'form-TOTAL_FORMS': 2,
+            'form-INITIAL_FORMS': 0,
+            'form-0-url': 'https://test04.com',
+            'form-1-url': 'https://test05.com',
+        })
+
+        response = addNodes(request)
+
+        # Check if the response was successful and the nodes were added
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(Node.objects.count(), 2)
+        self.assertContains(response, 'success')
+
+
+    def test_add_nodes_view_get_request(self):
+        # Simulate a GET request to the view
+        request = self.factory.get('/add-nodes/')
+        response = addNodes(request)
+
+        # Check if the response has a status code of 200 (success)
+        self.assertEqual(response.status_code, 200)
+
+        # Check if the response contains the formset in the context
+        self.assertContains(response, 'formset')
