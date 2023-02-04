@@ -30,7 +30,7 @@ jobs:
           python -c "import secrets, string; print(''.join(secrets.choice(string.ascii_letters + string.digits + string.punctuation) for i in range(67)))" > key.txt
     - name: Set temporary env variable
       run: |
-          echo "$(cat key.txt)"
+          export DJANGO_SECRET_KEY="$(cat key.txt)"
     - name: Run Tests
       run: |
         python vault/manage.py test
