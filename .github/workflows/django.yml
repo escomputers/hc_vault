@@ -33,5 +33,4 @@ jobs:
           export DJANGO_SECRET_KEY="$(cat key.txt)"
     - name: Run Tests
       run: |
-        #python vault/manage.py test
         echo $DJANGO_SECRET_KEY
