@@ -6,7 +6,7 @@
   <section class="content-header">
     <div class="container-fluid">
       <div class="row mb-2">
-        <div class="col-sm-6">
+        <div class="col-sm-8">
   		  	<nav aria-label="breadcrumb">
 						<ol class="breadcrumb">
 							<li class="breadcrumb-item"><a href="{% url 'dashboard' %}">Home</a></li>
@@ -16,45 +16,58 @@
 					</nav>
 				</div>
       </div>
+			{% if not clusters %}
+			<div class="alert alert-danger" role="alert">
+				<i class='fa fa-circle-info'></i>&nbsp;
+					Add a cluster <a href="{% url 'add-clusters' %}">here</a> before adding nodes
+			</div>
+		</div><!-- container-fluid -->
+	</section>
+	{% else %}<!-- if clusters are present -->
+
+			<!-- sezione per messaggi successo del formset -->
+			{% for field in form %}
+				{% for error in field.errors %}
+					<div class="alert alert-danger alert-dismissible fade show" role="alert">
+						<i class='fa fa-circle-info'></i>&nbsp;
+						<b>{{ field.value }}</b>
+						&nbsp;{{ error }}
+						<button type="button" class="close" data-dismiss="alert" aria-label="Close">
+							<span aria-hidden="true">&times;</span>
+						</button>
+					</div>
+				{% endfor %}
+			{% endfor %}
+
+			{% for form in formset %}
+			{% for field in form %}
+				{% for error in field.errors %}
+					<div class="alert alert-danger alert-dismissible fade show" role="alert">
+						<i class='fa fa-circle-info'></i>&nbsp;
+						<b>{{ field.value }}</b>
+						&nbsp;{{ error }}
+						<button type="button" class="close" data-dismiss="alert" aria-label="Close">
+							<span aria-hidden="true">&times;</span>
+						</button>
+					</div>
+				{% endfor %}
+			{% endfor %}
+		{% endfor %}
+
+		{% if success %}
+			<div class="alert alert-success alert-dismissible fade show" role="alert">
+				<i class='fa fa-circle-check'></i>&nbsp;saved!
+				<button type="button" class="close" data-dismiss="alert" aria-label="Close">
+					<span aria-hidden="true">&times;</span>
+				</button>
+			</div>
+		{% endif %}
     </div>
   </section>
 
 	<!-- Main content -->
 	<section class="content">
 		<div class="container-fluid">
-
-			<div class="card"><!-- List Jobs-->
-				<div class="card-header">
-					<h5>
-						<i class="fas fa-hammer"></i>
-						&nbsp;Scheduled alerts
-					</h5>
-				</div>
-
-				<div class="card-body">
-					<table id="jobs" class="table table-bordered table-hover">
-						<thead>
-							<tr>
-							<th>Cluster</th>
-							<th>Threshold</th>
-							<th>Emails</th>
-							<th></th>
-							</tr>
-						</thead>
-
-						<tbody>
-							<tr>
-							<td>MoncalieriTest</td>
-							<td>150</td>
-							<td>user@company.com</td>
-							
-							<td><span class="badge bg-danger"><font size="3.1em">Rimuovi</font></span></td>
-							</tr>
-						</tbody>
-					</table>
-				</div><!-- card body -->
-			</div><!-- card -->
-
 			<div class="card">
 				<div class="card-header">
 					<h5>
@@ -68,115 +81,175 @@
 
 					<div class="card"><!-- first card -->
 						<div class="card-header">
-							<h5>
+							<h6>
 								<i class="fas fa-server"></i>
 								&nbsp;Select cluster
-							</h5>
+							</h6>
 						</div>
 
 						<div class="card-body">
 							<div class="row">
-								<div class="col-sm-7">
-									<select class="custom-select">
-										<option selected>Select cluster</option>
-										<option value="1">MoncalieriTest</option>
-										<option value="2">ParmaTest</option>
-										<option value="3">TorinoTest</option>
-										<option value="1">MoncalieriProd</option>
-										<option value="2">ParmaProd</option>
-										<option value="3">TorinoProd</option>
-										<option value="1">MoncalieriDev</option>
-										<option value="2">ParmaDev</option>
-										<option value="3">TorinoDev</option>
-									</select>
+								<div class="col-sm-8">
+									<div class="input-group mb-3">
+										<div class="input-group-prepend">
+											<span class="input-group-text"><i class="fas fa-circle-nodes"></i>
+											</span>
+										</div>
+										<select id="clusters" name="cluster" class="form-control" required>
+											{% for i in clusters %}
+												<option value="{{ i.id }}">{{ i.cluster_name }}</option>
+											{% endfor %}
+										</select>
+									</div>
 
-								</div><!-- col-sm-7 -->
+								</div><!-- col-sm-8 -->
 							</div><!-- row -->
 						</div><!-- card-body -->
 					</div><!-- card -->
 
 					<div class="card"><!-- second card -->
 							<div class="card-header">
-								<h5>
+								<h6>
 									<i class="fas fa-bell"></i>
 									&nbsp;Set threshold
-								</h5>
+								</h6>
 							</div>
 
 							<div class="card-body">
-								<div class="col-sm-6">
-									<div class="input-group mb-3">
-										<div class="input-group-prepend">
-											<span class="input-group-text"><i class="fas fa-id-card"></i></span>
-										</div><!-- input-group-prepend -->
-										<input type="text" name="threshold" id="threshold" placeholder="License threshold" class="form-control pull-right">
-									</div><!-- input-group mb-3 -->
-								</div><!-- col-sm -->
+								<div class="row">
+									<div class="col-sm-8">
+										<div class="input-group mb-3">
+											<div class="input-group-prepend">
+												<span class="input-group-text"><i class="fas fa-id-card"></i></span>
+											</div><!-- input-group-prepend -->
+												<input type="text" name="threshold" placeholder="License threshold" class="form-control pull-right" required>
+										</div><!-- input-group mb-3 -->
+									</div><!-- col-sm-8 -->
+								</div><!-- row -->
 							</div><!-- card body -->
 					</div><!-- card -->
 
 					<div class="card"><!-- third card -->
 						<div class="card-header">
-							<h5>
+							<h6>
 								<i class="fas fa-envelope"></i>
 								&nbsp;Add emails
-							</h5>
+							</h6>
 						</div>
 
 						<div class="card-body">
-							<div class="form-group">
-								<div class="input-group mb-3">
-									<div class="input-group-prepend">
-										<span class="input-group-text"><i class="fas fa-envelope"></i></span>
-									</div><!-- input-group-prepend -->
-									<input type="email" class="form-control pull-right" name="email" id="email" placeholder="Email">
-								</div><!-- input-group mb-3 -->
-							</div>
-							<div class="form-group">
-								<div class="input-group mb-3">
-									<div class="input-group-prepend">
-										<span class="input-group-text"><i class="fas fa-envelope"></i></span>
-									</div><!-- input-group-prepend -->
-									<input type="email" class="form-control pull-right" name="cc" id="cc" placeholder="Email2">
-								</div><!-- input-group mb-3 -->
-							</div>
-							<div class="form-group">
-								<div class="input-group mb-3">
-									<div class="input-group-prepend">
-										<span class="input-group-text"><i class="fas fa-envelope"></i></span>
-									</div><!-- input-group-prepend -->
-									<input type="email" class="form-control pull-right" name="cc2" id="cc2" placeholder="Email3">
-								</div><!-- input-group mb-3 -->
-							</div>
-							<div class="form-group">
-								<div class="input-group mb-3">
-									<div class="input-group-prepend">
-										<span class="input-group-text"><i class="fas fa-envelope"></i></span>
-									</div><!-- input-group-prepend -->
-									<input type="email" class="form-control pull-right" name="cc3" id="cc3" placeholder="Email4">
-								</div><!-- input-group mb-3 -->
-							</div>
+							{{ formset.management_form }}
+							{% for item in formset %}
+								<div class="row">
+									<div class="col-sm-8">
+										<div id="inputFormRow">
+											<div class="input-group mb-3">
+												<div class="input-group-prepend">
+													<span class="input-group-text"><i class="fas fa-envelope"></i></span>
+												</div><!-- input-group-prepend -->
+												{{ item.email}}
+												<div class="input-group-append">
+													<button type="button" class="btn add btn-primary" id="addRow"><i class="fas fa-plus"></i>
+													Add email
+													</button>
+												</div><!-- input-group-append -->
+											</div><!-- input-group mb-3 -->
+										</div><!-- inputFormRow -->
+
+										<div id="newRow"></div>
+
+									</div><!-- col-sm-8 -->
+								</div><!-- row -->
+								{% endfor %}
 						</div><!-- card body -->
 					</div><!-- card -->
 
 				<!-- Pulsante submit -->
-				<button type="submit" class="submit btn btn-primary btn-block"  name="submit" value="Submit">Submit</button>
-
+				<button type="submit" class="submit btn btn-primary btn-block" name="submit" id="submit" value="Submit">Save</button>
 				</form>
+
+				<!-- forms vuoti -->
+				<div id="empty-form" class="form-control m-input" style="display:none;">
+					<div id="inputFormRow">
+						<div class="input-group mb-3">
+							<div class="input-group-prepend">
+								<span class="input-group-text"><i class="fas fa-envelope"></i></span>
+							</div>
+							{{ formset.empty_form.email }}
+							<div class="input-group-append">
+								<button id="removeRow" type="button" class="btn btn-danger">
+									Remove
+								</button>
+							</div>
+						</div><!-- input-group mb-3 -->
+					</div><!-- inputFormRow -->
+				</div><!-- div empty_form -->
+
 			</div><!-- card-group -->
 		</div><!-- container-fluid -->
 
 	</section>
+	{% endif %}
 </div><!-- content-wrapper -->
 
 <!-- datatable -->
 <script>
-	$(function () {
-		$('#jobs').DataTable({
-			"searching": false,
-			"ordering": false,
-			"responsive": true,
-		});
+$(function () {
+	$('#jobs').DataTable({
+		"searching": false,
+		"ordering": false,
+		"responsive": true,
 	});
-	</script>
+});
+</script>
+
+<script>
+$(document).ready(function() {
+	// initialize Select2
+	$('#clusters').select2({
+		theme: 'bootstrap4',
+	})
+});
+
+function addFormSets() {
+	let index = parseInt($('#id_form-TOTAL_FORMS').val());
+	let newForm = $('#empty-form').html().replace(/__prefix__/g, index);
+	$('#id_form-TOTAL_FORMS').val(index + 1);
+	$('#newRow').append(newForm);
+}
+// on click add row
+$("#addRow").on('click', addFormSets);
+
+// remove row
+$(document).on('click', '#removeRow', function () {
+	// get total forms index
+	let index = parseInt($('#id_form-TOTAL_FORMS').val());
+	// if index is not 0, decrement index (in order to avoid negative values)
+	if(index > 0) {
+		$('#id_form-TOTAL_FORMS').val(index - 1); // decrement Django total forms index
+		index--; // decrement our counter
+		// get informations about the element removed by the user
+		const elementsToBeRenamed_count = ($(this).closest('#inputFormRow').nextAll()).length
+		if(elementsToBeRenamed_count > 0) { // if the removed element was not the last
+			$(this).closest('#inputFormRow').nextAll().remove() // remove all the next elements after the removed element
+			// get the ID attribute of the removed element
+			const removedId = ($(this).closest('#inputFormRow').children().children()).filter('input').attr('id');
+			// extract only the numeric part of the result
+			const numericPart = removedId.match(/\d+/);
+			const removedIndex = parseInt(numericPart[0]) // convert string to number
+			$(this).closest('#inputFormRow').remove() // removed the clicked element
+			// iterate over the count
+			for(let i = 0; i < elementsToBeRenamed_count; i++){
+				// on each iteration, replace the prefix in 'name' and 'id' attributes inside the empty HTML form 
+				// with the current iteration number starting from the removedIndex number.
+				let newForm = $('#empty-form').html().replace(/__prefix__/g, removedIndex + i);
+				$('#newRow').append(newForm);
+			}
+		} else {
+			// if the removed element was the last
+			$(this).closest('#inputFormRow').remove()
+		}
+	}
+});
+</script>
 {% endblock %}

@@ -1,8 +1,7 @@
 from pathlib import Path
 import os
-from dotenv import load_dotenv
 
-SECRET_KEY = os.getenv("DJANGO_SECRET_KEY")
+SECRET_KEY = os.environ.get("DJANGO_SECRET_KEY")
 DEBUG = True
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.

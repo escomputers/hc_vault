@@ -8,12 +8,14 @@ on:
 
 jobs:
   build:
+    env:
+      DJANGO_SECRET_KEY: ${{ secrets.DJANGO_SECRET_KEY }}
 
     runs-on: ubuntu-latest
     strategy:
       max-parallel: 4
       matrix:
-        python-version: [3.9]
+        python-version: [3.11]
 
     steps:
     - uses: actions/checkout@v3
@@ -27,4 +29,4 @@ jobs:
         pip install -r dev-requirements.txt
     - name: Run Tests
       run: |
-        python manage.py test
+        python vault/manage.py test
