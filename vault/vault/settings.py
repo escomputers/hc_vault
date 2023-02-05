@@ -1,13 +1,7 @@
 from pathlib import Path
 import os
-import platform
 
-platform = platform.platform()
-if platform.startswith('Windows'):
-    SECRET_KEY = os.environ.get("DJANGO_SECRET_KEY")
-else:
-    SECRET_KEY = {{ secrets.GIT_TOKEN }}
-
+SECRET_KEY = os.environ.get("DJANGO_SECRET_KEY")
 DEBUG = True
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
