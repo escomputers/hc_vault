@@ -2,7 +2,74 @@ from django.test import RequestFactory, TestCase
 from .models import Cluster, Node, Alert
 from .views import addClusters, addNodes
 from django.test import Client
+from django.core.exceptions import ValidationError
 
+
+# ############## MODELS TESTS #########################################
+class ClusterModelTestCase(TestCase):
+    def test_cluster_name_validation(self):
+        cluster = Cluster(cluster_name='cluster1', entities_count=10, entities_metadata='metadata1')
+        cluster.full_clean() # Raises ValidationError if any field validation fails
+        cluster.save()
+        self.assertEqual(Cluster.objects.count(), 1)
+
+        cluster = Cluster(cluster_name='cluster 2', entities_count=10, entities_metadata='metadata1')
+        with self.assertRaises(ValidationError):
+            cluster.full_clean()
+
+        cluster = Cluster(cluster_name='cluster1', entities_count=10, entities_metadata='metadata1')
+        with self.assertRaises(ValidationError):
+            cluster.full_clean()
+
+    def test_entities_count_validation(self):
+        cluster = Cluster(cluster_name='cluster1', entities_count=-10, entities_metadata='metadata1')
+        try:
+            cluster.full_clean()
+        except ValidationError as e:
+            self.assertEqual(str(e), '{"entities_count": ["Ensure this value is greater than or equal to 0."]}')
+
+class ClusterModelTestCase2(TestCase):
+    def setUp(self):
+        Cluster.objects.create(cluster_name='cluster1', entities_count=10, entities_metadata='metadata1')
+        Cluster.objects.create(cluster_name='test cluster', entities_count=1550, entities_metadata='meta-data')
+
+    def test_cluster_name_validation(self):
+        cluster = Cluster.objects.get(cluster_name='cluster1')
+        self.assertEqual(cluster.cluster_name, 'cluster1')
+
+    def test_entities_count_validation(self):
+        cluster = Cluster.objects.get(cluster_name='cluster1')
+        self.assertEqual(cluster.entities_count, 10)
+
+    def test_entities_metadata_validation(self):
+        cluster = Cluster.objects.get(cluster_name='cluster1')
+        self.assertEqual(cluster.entities_metadata, 'metadata1')
+
+    def test_str_representation(self):
+        cluster = Cluster.objects.get(cluster_name='cluster1')
+        self.assertEqual(str(cluster), 'cluster1')
+
+
+class NodeModelTestCase(TestCase):
+    def setUp(self):
+        self.cluster = Cluster.objects.create(cluster_name='cluster1', entities_count=10, entities_metadata='metadata1')
+
+    def test_node_creation(self):
+        node = Node(url='https://example.com', cluster=self.cluster)
+        node.full_clean()
+        node.save()
+        self.assertEqual(Node.objects.count(), 1)
+
+        node = Node(url='https://example.com', cluster=self.cluster)
+        with self.assertRaises(ValidationError):
+            node.full_clean()
+
+        node = Node(url='http://invalid-url', cluster=self.cluster)
+        with self.assertRaises(ValidationError):
+            node.full_clean()
+
+
+# ############## VIEWS TESTS #########################################
 class HomeViewTest(TestCase):
     def setUp(self):
         # Create a couple of clusters
